@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <p:dialog id="dlgEMailNotificacion" widgetVar="dlgEMailNotificacion" header="Listado de Notificaciones a enviar" width="700" closable="false" resizable="false" 
+              modal="true" showEffect="fade" hideEffect="fade">
+        <p:panelGrid columns="2" columnClasses="col3,col9" 
+                     styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+            <h:outputText style="font-weight: bold;" value="Entidad Financiera: "/>
+            <p:inputText value="#{pagoProveedoresController.nombreEntFinanciera}" readonly="true" size="60"/>
+            <h:outputText style="font-weight: bold;" value="Correo electrónico: "/>
+            <p:inputText value="#{pagoProveedoresController.emailUnico}" readonly="true" size="60"/>
+        </p:panelGrid>
+        <br/>
+        <p:dataTable value="#{pagoProveedoresController.lstEmailProveeCredito}" var="prov" rowIndexVar="rowId" scrollable="true" scrollHeight="300"
+                     styleClass="ui-datatable-borderless ui-datatable-reflow">
+            <f:facet name="header">
+                <h:outputText value="Listado de Proveedores a notificar."/>
+            </f:facet>
+
+            <p:column headerText="#" width="10" style="text-align: center;">
+                #{rowId+1}
+            </p:column>
+            <p:column headerText="N.I.T" width="100">
+                <h:outputText value="#{prov.numeroNit}"/>
+            </p:column>
+            <p:column headerText="Razón Social">
+                <h:outputText value="#{prov.razonSocial}"/>
+            </p:column>
+            <p:column headerText="eMail">
+                <h:outputText value="#{prov.correoElectronico}"/>
+            </p:column>
+        </p:dataTable>
+        <f:facet name="footer">
+            <p:commandButton value="Aceptar" action="#{pagoProveedoresController.enviarCorreos}" onclick="PF('dlgEMailNotificacion').hide();" icon="fa fa-check-circle"/>
+            <p:commandButton value="Cancelar" onclick="PF('dlgEMailNotificacion').hide();" icon="fa fa-times-circle"/>
+        </f:facet>
+    </p:dialog>
+</ui:composition>

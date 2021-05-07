@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Busqueda de Contratos</title>
+        <style type="text/css">
+            .col1{
+                height:auto;vertical-align: top; width: 100px;
+            }
+            .col2{
+                height:auto; vertical-align: middle; width: 300px;
+            }
+        </style>
+        <h:outputStylesheet name="css/layout-default.css" library="paradise-layout" />
+        <h:outputScript name="funciones-1.js" library="js"/>
+    </h:head>
+    <h:body>
+        <h:form id="frmDialog">
+            <p:growl id="growl" showDetail="true" escape="false">
+                <p:autoUpdate />
+            </p:growl>
+
+            <p:panel id="pnlFiltro" header="Filtro de búsqueda" toggleable="true">
+                <f:facet name="header" >
+                    <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10" height="8"/>
+                    <p:outputLabel value="Filtro de busqueda"/>
+                </f:facet>
+                <h:panelGrid columns="2">  
+                    <p:outputLabel value="#{bundle['ce.codEnt']}:" />
+                    <h:panelGrid columns="2" id="codigoEntidad" >
+                        <p:inputText maxlength="5" value="#{segFisicoController.codigoEntidad}" size="5" autocomplete="off" onkeyup="queryEntidad(this.value);" />
+                        <p:outputLabel id="nombreCE" value="#{segFisicoController.entidadEducativa.nombre}" style="font-weight: bold"/>
+                    </h:panelGrid>
+
+                    <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />  
+                    <p:selectOneMenu id="idRubro" value="#{segFisicoController.rubro}" effect="fade">
+                        <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
+                        <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="N.I.T.:" rendered="false"/>
+                    <p:inputMask id="nit" mask="9999-999999-999-9"  value="#{segFisicoController.numeroNit}" size="17" rendered="false"/>
+                    <h:outputText value="Proveedor:" rendered="false"/>
+                    <p:inputText value="#{segFisicoController.razonSocial}" size="55" rendered="false"/>
+                    <h:outputText value="Departamento C.E.:" rendered="false"/>
+                    <p:selectOneMenu id="cboDepartamento" value="#{segFisicoController.codigoDepartamento}" rendered="false">
+                        <f:selectItem noSelectionOption="true" itemLabel="Seleccione un departamento" />
+                        <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Número Contrato:" rendered="false"/>
+                    <p:inputText value="#{segFisicoController.numeroContrato}" rendered="false"/>
+                </h:panelGrid>
+                <h:panelGrid columns="2">
+                    <p:commandButton   value="Buscar" icon="ui-icon-search" action="#{segFisicoController.buscarContrato}" update="pnlDatos"/>  
+                    <p:ajaxStatus id="ajaxIcon" style="width:160px;height:16px;">
+                        <f:facet name="start">
+                            <i class="fa fa-spinner fa-spin"></i>
+                            <p:spacer width="15" />
+                            <p:outputLabel value="Espere por favor.." />
+                        </f:facet>
+
+                        <f:facet name="complete">
+                            <h:outputText value="" />
+                        </f:facet>
+                    </p:ajaxStatus>
+                </h:panelGrid>
+            </p:panel>
+
+            <p:panel header="Listado de contratos" id="pnlDatos">
+                <p:dataTable value="#{segFisicoController.lstContratos}" var="contrato" rowIndexVar="rowId" rowKey="#{contrato.idContrato}"
+                             emptyMessage="No se encontrarón coincidencias con los criterios de búsqueda" 
+                             paginator="true" paginatorPosition="top" rows="10"> 
+
+                    <p:column headerText="#" style="text-align: center" width="15">
+                        #{rowId+1}
+                    </p:column>
+                    <p:column headerText="Departamento" width="105">
+                        <h:outputText value="#{contrato.nombreDepartamento}"/>
+                    </p:column>
+                    <p:column headerText="Cód. Entidad" width="50">
+                        <h:outputText value="#{contrato.codigoEntidad}"/>
+                    </p:column>
+                    <p:column headerText="Nombre C.E.">
+                        <h:outputText value="#{contrato.nombreCe}"/>
+                    </p:column>
+                    <p:column headerText="N.I.T. proveedor" width="110">
+                        <h:outputText value="#{contrato.numeroNit}"/>
+                    </p:column>
+                    <p:column headerText="Proveedor">
+                        <h:outputText value="#{contrato.razonSocial}"/>
+                    </p:column>
+                    <p:column headerText="Monto $" styleClass="numero"  width="60">
+                        <h:outputText value="#{contrato.monto}">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column width="12">
+                        <p:commandLink action="#{segFisicoController.editSeguimiento}">
+                            <f:setPropertyActionListener value="#{contrato}" target="#{segFisicoController.contratoSelecionado}" />  
+                            <i class="fa fa-hand-o-right blue" style="font-size: 17px;"></i>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+            <p:remoteCommand name="findEntidad" update="nombreCE" actionListener="#{segFisicoController.buscarEntidadEducativa}" />
+        </h:form>
+    </h:body>
+</html>
+

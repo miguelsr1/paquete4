@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Datos del detalle</title>
+        <style type="text/css">
+            .col1{
+                height:auto;vertical-align: top; width: 100px;
+            }
+            .col2{
+                height:auto; vertical-align: middle; width: 300px;
+            }
+            .companyHeaderGrid tr, .companyHeaderGrid td {
+                background: none !important;
+                border-style: none !important;
+            }
+        </style>
+        <link href="#{request.contextPath}/resources/css/dialog.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/iconos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body>
+        <h:form id="frmDialog">
+            <p:panel id="pnlFiltro2">                
+                <h:panelGrid columns="2" columnClasses="col4, col8"> 
+                    <h:outputText value="Fecha Acta Recepción:"/>
+                    <h:panelGroup>
+                        <p:calendar value="#{edicionSeguimientoMB.detalleRecepcion.fechaRecepcion}" pattern="dd/MM/yyyy" size="10" id="fechaRec" required="true" requiredMessage="Fecha de recepcion es obligatoria" locale="es" navigator="true">
+                            <p:ajax event="dateSelect" listener="#{edicionSeguimientoMB.onDateActaSelect}" update="fechaRec messages"/>
+                        </p:calendar>
+                    </h:panelGroup>
+                    <p:outputLabel value="Tipo Entrega" rendered="#{edicionSeguimientoMB.mostrarEntregas}"/>
+                    <h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="5" rendered="#{edicionSeguimientoMB.mostrarEntregas}">
+                        <p:selectOneRadio id="entrega" value="#{edicionSeguimientoMB.tipoEntrega}" required="true" requiredMessage="Selecciones Numero de Entrega">
+                            <f:selectItem itemLabel="1. Primera Entrega" itemValue="1" />
+                            <f:selectItem itemLabel="2. Segunda Entrega" itemValue="2" />
+                            <p:ajax update="entrega idRubro pnlTotales" event="change" />
+                        </p:selectOneRadio>
+                    </h:panelGrid>
+                    <p:outputLabel value="Item:" /> 
+                    <p:selectOneMenu id="idRubro" value="#{edicionSeguimientoMB.noItem}" effect="fade" disabled="#{edicionSeguimientoMB.op eq '0'}">
+                        <f:selectItem itemLabel="Seleccione un Item" itemValue="" />  
+                        <f:selectItems value="#{edicionSeguimientoMB.lstDetalleOfertaPendiente}" var="item" itemValue="#{item.noItem}" itemLabel="#{item.noItem} - #{item.consolidadoEspTec}"/>
+                        <p:ajax event="valueChange" update="pnlTotales btnGuardar" listener="#{edicionSeguimientoMB.calcularTotales}" process="@this,entrega"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Cantidad entregada:" />
+                    <p:inputNumber value="#{edicionSeguimientoMB.detalleRecepcion.cantidadEntregada}" autocomplete="off" disabled="false" minValue="0" decimalPlaces="0" size="5" inputStyle="text-align: right;">
+                        <p:ajax event="keyup" update="pnlTotales btnGuardar" listener="#{edicionSeguimientoMB.actualizarSaldo}" />
+                    </p:inputNumber>
+                    <p:outputLabel value="Observaciones:" />
+                    <p:inputTextarea id="obs" value="#{edicionSeguimientoMB.detalleRecepcion.observaciones}" />
+                </h:panelGrid>
+
+                <p:panelGrid id="pnlTotales" styleClass="companyHeaderGrid">
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Cantidad del contrato: "/>
+                        </p:column>
+                        <p:column style="text-align: right">
+                            <h:outputText value="#{edicionSeguimientoMB.cantidadTotalItem}" style="color:blue; font-weight: bold;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Cantidad recibida: "/>
+                        </p:column>
+                        <p:column style="text-align: right">
+                            <h:outputText value="#{edicionSeguimientoMB.cantidadRecibidaItem}" style="color:green; font-weight: bold;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:separator />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Cantidad Pendiente : "/>
+                        </p:column>
+                        <p:column style="text-align: right">
+                            <h:outputText value="#{edicionSeguimientoMB.cantidadPendienteItem}" style="color:red; font-weight: bold;"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:messages id="messages" showSummary="false" showDetail="true" closable="true" escape="false">
+                    <p:autoUpdate />
+                </p:messages>
+
+                <f:facet name="footer">
+                    <p:commandButton id="btnGuardar" value="Guardar" icon="ui-icon-disk" action="#{edicionSeguimientoMB.modificardetalleContrato}" 
+                                     disabled="#{edicionSeguimientoMB.errorValidacion}"/>
+                </f:facet>
+            </p:panel>
+            <p:blockUI block="pnlFiltro2" trigger="btnGuardar" />
+        </h:form>
+    </h:body>
+</html>
+

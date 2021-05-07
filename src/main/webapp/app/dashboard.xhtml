@@ -1,0 +1,258 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+    <ui:define name="title">Menus</ui:define>
+
+    <ui:define name="head">
+        <style type="text/css">
+            .ui-steps .ui-steps-item {
+                width: 25%;
+            }
+            .customHeader th{
+                background-color: black;
+            }
+            .jqplot-xaxis-label, .jqplot-yaxis-label, .jqplot-y2axis-label, .jqplot-x2axis-label {
+                color: #757575; 
+            }
+
+            table.jqplot-table-legend {
+                background-color: #ffffff;
+                color: #757575;
+                border-color: #dce2e7;
+            }
+        </style>
+        <script type="text/javascript">
+            function skinBar() {
+                this.cfg.shadow = false;
+                this.cfg.title = '';
+                this.cfg.seriesColors = ['#3984b8', '#f6ac2b', '#7e8dcd', '#39b8b6'];
+                this.cfg.grid = {
+                    background: '#ffffff',
+                    borderColor: '#ffffff',
+                    gridLineColor: '#dce2e7',
+                    shadow: false
+                };
+                this.cfg.axesDefaults = {
+                    borderWidth: 0.1,
+                    borderColor: 'bdc3c9',
+                    rendererOptions: {
+                        textColor: '#757575'
+                    }
+                };
+                this.cfg.seriesDefaults = {
+                    shadow: false,
+                    lineWidth: 1,
+                    renderer: $.jqplot.BarRenderer,
+                    markerOptions: {
+                        shadow: false,
+                        size: 7,
+                        style: 'circle'
+                    }
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <div class="ui-g dashboard">
+            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                <div class="ui-g card overview-box overview-box-1 no-gutter">
+                    <div class="overview-box-title">Rubro de Adquisición</div>
+                    <div class="overview-box-details">
+                        <h:panelGrid style="width: 100%;" columns="2" columnClasses="col10,col2">
+                            <p:selectOneMenu id="cboRubro" value="#{dashboardMB.rubro}">
+                                <f:selectItem itemValue="0" itemLabel="Seleccione un valor"/>
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.nombreCorto}"/>
+                                <p:ajax update="dvMonto dvCantidad dvProveedor pnlRubro dvTipoEmp dvTipoGen" listener="#{dashboardMB.updateDatos}"/>
+                            </p:selectOneMenu>
+                            <p:commandButton icon="fa fa-home" action="inicial.mined?faces-redirect=true" process="@this"/>
+                        </h:panelGrid>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                <div class="ui-g card overview-box overview-box-2 no-gutter">
+                    <div class="overview-box-title">Monto Contratado</div>
+                    <p:outputPanel id="dvMonto" styleClass="overview-box-details" style="text-align: right;">
+
+                        <i class="fa fa-usd overview-box-details-icon" />
+                        <span class="overview-box-details-count">
+                            <h:outputText value="#{dashboardMB.montoTotalRubro}">
+                                <f:convertNumber pattern="#,##0.00"/>
+                            </h:outputText>
+                        </span>
+                    </p:outputPanel>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                <div class="ui-g card overview-box overview-box-3 no-gutter">
+                    <div class="overview-box-title">Cantidad Contratada</div>
+                    <p:outputPanel id="dvCantidad" styleClass="overview-box-details" style="text-align: right;">
+                        <i class="fa fa-cubes overview-box-details-icon" />
+                        <span class="overview-box-details-count">
+                            <h:outputText value="#{dashboardMB.cantidadTotalRubro}">
+                                <f:convertNumber pattern="#,##0"/>
+                            </h:outputText>
+                        </span>
+                    </p:outputPanel>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                <div class="ui-g card overview-box overview-box-4 no-gutter">
+                    <div class="overview-box-title">Proveedores Contratados</div>
+                    <p:outputPanel id="dvProveedor" styleClass="overview-box-details" style="text-align: right;">
+                        <i class="fa fa-users overview-box-details-icon" />
+                        <span class="overview-box-details-count">
+                            <h:outputText value="#{dashboardMB.cantidadTotalEmp}">
+                                <f:convertNumber pattern="#,##0"/>
+                            </h:outputText>
+                        </span>
+                    </p:outputPanel>
+                </div>
+            </div>
+            <p:outputPanel id="pnlRubro" styleClass="ui-g-12 ui-md-5 ui-lg-5 task-list">
+                <p:panel header="#{dashboardMB.rubro eq 1?'Confección de Uniformes':(dashboardMB.rubro eq 2?'Paquete de Utiles':dashboardMB.rubro eq 3?'Zapatos Escolares':(dashboardMB.rubro eq 4?'1er Uniforme':(dashboardMB.rubro eq 5?'2do Uniforme':'N/A')))}">
+                    <div class="card">
+                        <p:dataTable value="#{dashboardMB.lstTotalContratado}" var="val" sortBy="#{val.estadoEliminacion}"
+                                     selection="#{dashboardMB.departamentoContratado}" rowKey="#{val.codDepCe}" selectionMode="single">
+                            <p:ajax event="rowSelect" listener="#{dashboardMB.updateDepaListados}" update="dvTipoEmp dvTipoGen" />
+
+                            <p:column headerText="Departamento">
+                                <h:outputText value="#{val.nomDepCe}"/>
+                            </p:column>
+                            <p:column headerText="Monto" width="80" style="text-align: right;">
+                                <h:outputText value="#{val.monto}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Cantidad" width="55" style="text-align: right;" rendered="#{dashboardMB.rubro eq 2}">
+                                <h:outputText value="#{val.cantidad}">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Niñas" width="55" style="text-align: right;" rendered="#{dashboardMB.rubro ne 2}">
+                                <h:outputText value="#{val.cantidadNina/dashboardMB.divisor}">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Niños" width="55" style="text-align: right;" rendered="#{dashboardMB.rubro ne 2}">
+                                <h:outputText value="#{val.cantidadNino/dashboardMB.divisor}">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:summaryRow>
+                                <p:column style="text-align:right">
+                                    <h:outputText value="Total:" />
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <h:outputText value="#{dashboardMB.montoTotalRubro}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column styleClass="numero" colspan="#{dashboardMB.rubro eq 2?1:2}">
+                                    <h:outputText value="#{dashboardMB.cantidadTotalRubro/dashboardMB.divisor}" rendered="#{dashboardMB.rubro eq 1}">
+                                        <f:convertNumber pattern="#,##0"/>
+                                    </h:outputText>
+                                    <h:outputText value="#{dashboardMB.cantidadTotalRubro}" rendered="#{dashboardMB.rubro ne 1}">
+                                        <f:convertNumber pattern="#,##0"/>
+                                    </h:outputText>
+                                </p:column>
+                            </p:summaryRow>
+                        </p:dataTable>
+                    </div>
+                </p:panel>
+            </p:outputPanel>
+
+            <p:outputPanel id="dvTipoEmp" styleClass="ui-g-12 ui-md-4 ui-lg-4 task-list" >
+                <p:panel header="Datos Proveedores :: #{dashboardMB.departamentoContratado.nomDepCe}">
+                    <div class="card">
+                        <p:dataTable value="#{dashboardMB.lstTotTipoEmp}" var="emp" sortBy="#{emp.estadoEliminacion}" 
+                                     selection="#{dashboardMB.tipoEmpresa}" rowKey="#{emp.idTipoEmp}" selectionMode="single">
+                            <p:ajax event="rowSelect" listener="#{dashboardMB.updateGeneroListados}" update="dvTipoGen" />
+
+                            <p:column headerText="Tipo Empresa">  
+                                <h:outputText value="#{emp.descripcionTipoEmp}"/>
+                            </p:column>
+
+                            <p:column headerText="Monto Adjudicado" style="text-align: right" width="90">
+                                <h:outputText value="#{emp.monto}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Total Emp." style="text-align: right"  width="40">  
+                                <h:outputText value="#{emp.cantidadEmp}" >
+                                    <f:convertNumber pattern="#,##0"  />
+                                </h:outputText>
+                            </p:column>
+                            <p:summaryRow>
+                                <p:column style="text-align:right">
+                                    <h:outputText value="Total:" />
+                                </p:column>
+                                <p:column style="text-align: right;">
+                                    <h:outputText value="#{dashboardMB.montoTotalEmp}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <h:outputText value="#{dashboardMB.cantidadTotalEmp}">
+                                        <f:convertNumber pattern="#,##0"/>
+                                    </h:outputText>
+                                </p:column>
+                            </p:summaryRow>
+                        </p:dataTable> 
+                    </div>
+                </p:panel>
+            </p:outputPanel>
+
+            <p:outputPanel id="dvTipoGen" styleClass="ui-g-12 ui-md-3 ui-lg-3 task-list">
+                <p:panel header="Genero :: #{dashboardMB.tipoEmpresa.descripcionTipoEmp}">
+                    <div class="card">
+                        <p:dataTable value="#{dashboardMB.lstTotaGeneroEmp}" var="gen" sortBy="#{gen.idPersoneria}" >
+                            <p:headerRow>
+                                <p:column colspan="3">
+                                    <h:outputText value="#{gen.idPersoneria eq 1 ? 'Natural': 'Jurídica (Genero del Repre. Legal)'}" />
+                                </p:column>
+                            </p:headerRow>
+                            <p:column headerText="Genero">  
+                                <h:outputText value="#{gen.idGenero eq 1 ? 'Mas': 'Fem'}" />
+                            </p:column>
+
+                            <p:column headerText="Monto Adjudicado" style="text-align: right" width="90">
+                                <h:outputText value="#{gen.monto}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Total" style="text-align: right"  width="30">  
+                                <h:outputText value="#{gen.cantidadEmp}" >
+                                    <f:convertNumber pattern="#,##0"  />
+                                </h:outputText>
+                            </p:column>
+                            <p:summaryRow listener="#{dashboardMB.calculateTotal(gen.idPersoneria)}">
+                                <p:column style="text-align:right">
+                                    <h:outputText value="Total:" />
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <h:outputText value="#{dashboardMB.montoTotalGenero}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <h:outputText value="#{dashboardMB.cantidadTotalGenero}">
+                                        <f:convertNumber pattern="#,##0"/>
+                                    </h:outputText>
+                                </p:column>
+                            </p:summaryRow>
+                        </p:dataTable> 
+                    </div>
+                </p:panel>
+            </p:outputPanel>
+        </div>
+
+    </ui:define>
+</ui:composition>

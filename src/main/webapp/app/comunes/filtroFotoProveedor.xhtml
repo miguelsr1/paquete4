@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:head>
+        <title>Fotografía</title>
+        <style type="text/css">
+            .col1{
+                height:auto;vertical-align: top; width: 100px;
+            }
+            .col2{
+                height:auto; vertical-align: middle; width: 300px;
+            }
+        </style>
+        <link href="#{request.contextPath}/resources/css/dialog.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/iconos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+
+    <h:body>
+        <h:form id="frmDialog">
+            <p:growl showDetail="true" escape="false">
+                <p:autoUpdate />
+            </p:growl>
+            <p:panel id="pnlParametros" styleClass="panelColumns">
+                <h:panelGrid columns="2" styleClass="panelColumns">
+                    <p:panel id="panelFotoId" header="Foto" style="width: 360px;height: 300px;">
+                        <p:imageCropper value="#{imagenController.imagemRecortada}" 
+                                        initialCoords="100,40,230,200" maxSize="120,150" minSize="120,150"  id="imageCropperFotoId" 
+                                        rendered="#{imagenController.exibeImagemCapturada}"
+                                        image="#{pageContext.servletContext.contextPath}/resources/images/temp/#{imagenController.foto}"/>
+                    </p:panel>
+                    <p:panel id="panelFotoRecortadaId" header="Foto Recortada" style="width: 140px;height: 186px;">
+                        <p:graphicImage value="#{pageContext.servletContext.contextPath}/resources/images/temp/#{imagenController.fotoRecortada}" cache="false"/>
+                    </p:panel>
+                </h:panelGrid>
+                <f:facet name="footer">
+                    <p:commandButton id="webcamId" onclick="PF('dialogCamara').show();" icon="iconWebCam" value="Tomar foto" />
+                    <p:commandButton id="recortarId" action="#{imagenController.recortar}" icon="iconTijera" 
+                                     value="Recortar" process="@this imageCropperFotoId" update="panelFotoRecortadaId btnAceptar" style="margin-left: 10px;" 
+                                     disabled="#{not imagenController.exibeImagemCapturada}"/>
+                    <p:commandButton id="btnAceptar" value="Aceptar" icon="fa fa-check-circle" 
+                                     disabled="#{not imagenController.exibeImagemCapturada}"  
+                                     action="#{imagenController.cerrarDlgFoto}"/>
+                    <p:commandButton value="Cancelar" action="#{imagenController.cancelFoto}" icon="fa fa-times-circle" onclick="PF('dlgImagen').hide();"/>
+                </f:facet>
+            </p:panel>
+
+
+            <p:dialog id="dialogCamara" widgetVar="dialogCamara"  resizable="false" showHeader="false">
+                <h:panelGrid columns="1" cellpadding="5">
+                    <p:photoCam widgetVar="pc" listener="#{imagenController.oncapture}" update="panelFotoId recortarId"/>
+                </h:panelGrid>
+                <f:facet name="footer">
+                    <p:commandButton value="Capturar" onclick="PF('pc').capture();
+                            PF('dialogCamara').hide();"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dialogCamara').hide();"/>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Reasignar clave de acceso</title>
+        <style type="text/css">
+            body {
+                font-size: 10px;
+            }
+            .ui-panel .ui-panel-footer {
+                border-width: 1px 0 0;
+                margin: 0.5em 0 0;
+                padding: 0.5em 1em;
+                text-align: right;
+            }
+            .ui-layout, .ui-layout-doc, .ui-layout-unit, .ui-layout-wrap, .ui-layout-bd, .ui-layout-hd{
+                border: none;
+                -moz-border-radius:0px !important;
+                -webkit-border-radius:0px !important;
+                border-radius:0px !important;
+                padding: 1px
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="frmReasignarClave">
+            <!--div class="g-recaptcha" data-sitekey="6LcTegATAAAAAOCD_GmUjRWjqJ97fPSny6SlJ2Fk"></div-->
+            <p:captcha label="Captcha" />
+            <p:panel>
+                <p:messages showDetail="true"/>
+                <h:panelGrid columns="2">
+                    <f:facet name="header">
+                        <p:outputLabel value="Digite su usuario para poder reenviar una nueva contraseña a su correo eléctronico"/>
+                    </f:facet>
+                    <p:outputLabel value="Usuario: "/>
+                    <p:inputText id="email"  label="email" required="true"
+                                 validatorMessage="Formato de correo invalido"
+                                 value="#{reasignarClaveController.correo}">
+                        <f:validateRegex
+                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                    </p:inputText>
+                    <p:watermark for="email" value="Correo Electronico *" />
+                    <p:message for="email" />
+
+                </h:panelGrid>
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar"  ajax="false" action="#{reasignarClaveController.reasignar}"/>
+                </f:facet>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
+

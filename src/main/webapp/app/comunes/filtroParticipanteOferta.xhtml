@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Parametros Generales</title>
+        <style type="text/css">
+            .col1{
+                height:auto;vertical-align: top; width: 100px;
+            }
+            .col2{
+                height:auto; vertical-align: middle; width: 300px;
+            }
+        </style>
+        <link href="#{request.contextPath}/resources/css/dialog.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/iconos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body>
+        <h:form id="frmDialog">
+            <p:tabView id="tbEmpresas">
+                <p:tab title="Municipio: #{ofertaMB.municipioCe}">
+                    <p:dataTable id="tblEmpresas" widgetVar="tblEmpresas" value="#{ofertaMB.lstCapaEmpresas}" 
+                                 var="capaEmpresa" rowKey="#{capaEmpresa.idMuestraInteres.idEmpresa}" rowIndexVar="id"
+                                 selectionMode="single" selection="#{ofertaMB.capaInstSeleccionada}" style="height: 400px; width: 800px"
+                                 paginator="true" rows="10" emptyMessage="#{bundle.EmptyTable}"
+                                 paginatorPosition="top" resizableColumns="true" lazy="false" scrollable="false">
+
+                        <p:ajax event="rowToggle" listener="#{ofertaMB.onRowToggle}"  />
+
+                        <p:column style="width:16px">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Razón Social" width="350" filterBy="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" filterMatchMode="contains">
+                            <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" styleClass="saltoLinea" />
+                        </p:column>
+
+                        <p:column headerText="Estado" style="width: 80px">
+                            <p:outputLabel value="#{capaEmpresa.idMuestraInteres.idEmpresa.idEstadoRegistro.descripcionEstado}" />
+                        </p:column>
+
+                        <p:column headerText="Saldo" style="width: 60px; text-align: right">
+                            <h:outputText value="#{capaEmpresa.capacidadAcreditada-capaEmpresa.capacidadAdjudicada}"  style="width: border-box">
+                                <f:convertNumber pattern="#,##0.00"  />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:rowExpansion>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:panelGrid >
+                                            <f:facet name="header">
+                                                <p:row>
+                                                    <p:column colspan="2">
+                                                        <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}fotoProveedores/#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
+                                                    </p:column>
+                                                </p:row>
+                                            </f:facet>
+                                            <p:row>
+                                                <p:column>
+                                                    <h:outputText value="N.I.T.:"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.numeroNit}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column>
+                                                    <h:outputText value="Razon Social:"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column>
+                                                    <h:outputText value="Departamento:"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column>
+                                                    <h:outputText value="Municipio:"/>
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column>
+                                                    <h:outputText value="Capacidad Calificada:" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{capaEmpresa.capacidadAcreditada}" >
+                                                        <f:convertNumber pattern="#,##0.00"  />
+                                                    </h:outputText>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column>
+                                                    <h:outputText value="Capacidad Adjudicada" />
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{capaEmpresa.capacidadAdjudicada}">
+                                                        <f:convertNumber pattern="#,##0.00"  />
+                                                    </h:outputText>
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                        <p:panel visible="#{ofertaMB.detalleProceso.idRubroAdq.idRubroInteres eq 3}">
+                                            <p:commandButton  value="Ver Fotos" action="#{ofertaMB.verFotosProductos}"/>
+                                        </p:panel>
+                                    </p:column>
+                                    <p:column headerText="Foto" width="160">
+                                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{ofertaMB.lstPreciosReferencia}" var="precio" 
+                                                     emptyMessage="No se han registrado precios a este proveedor">
+
+                                            <p:column headerText="Item" width="15" id="item">
+                                                <p:outputLabel value="#{precio.noItem}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción Item" width="100">
+                                                <p:outputLabel value="#{precio.idProducto.nombreProducto}" id="descripcionItem" />
+                                            </p:column>
+
+                                            <p:column headerText="Nivel Educativo" width="80">
+                                                <p:outputLabel value="#{precio.idNivelEducativo.descripcionNivel}" id="nivelEducativo"/>
+                                            </p:column>
+
+                                            <p:column headerText="Precio U." width="50" styleClass="numero" id="precio">
+                                                <h:outputText value="#{precio.precioReferencia}">
+                                                    <f:convertNumber pattern="###0.00"/>
+                                                </h:outputText>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+
+                        </p:rowExpansion>
+                    </p:dataTable>
+                </p:tab>
+                <p:tab title="Otros Municipios">
+                    <p:dataTable id="tblEmpresas2" widgetVar="tblEmpresas2" value="#{ofertaMB.lstCapaEmpresasOtros}" 
+                                 var="capaEmpresa" rowKey="#{capaEmpresa.idMuestraInteres.idEmpresa}" rowIndexVar="id"
+                                 selectionMode="single" selection="#{ofertaMB.capaInstSeleccionada}" style="height: 400px; width: 800px"
+                                 paginator="true" rows="10" emptyMessage="#{bundle.EmptyTable}"
+                                 paginatorPosition="top" resizableColumns="true" lazy="false" scrollable="false">
+
+                        <p:ajax event="rowToggle" listener="#{ofertaMB.onRowToggle}"  />
+
+                        <p:column style="width:16px">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Razón Social" width="350" filterBy="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" filterMatchMode="contains">
+                            <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}" styleClass="saltoLinea" />
+                        </p:column>
+                        <p:column headerText="Municipio" style="width: 150px">
+                            <p:outputLabel value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}" />
+                        </p:column>
+                        <p:column headerText="Estado" style="width: 80px">
+                            <p:outputLabel value="#{capaEmpresa.idMuestraInteres.idEmpresa.idEstadoRegistro.descripcionEstado}" />
+                        </p:column>
+
+                        <p:column headerText="Saldo" style="width: 60px; text-align: right">
+                            <h:outputText value="#{capaEmpresa.capacidadAcreditada-capaEmpresa.capacidadAdjudicada}"  style="width: border-box">
+                                <f:convertNumber pattern="#,##0"  />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:rowExpansion>
+                            <p:panelGrid>
+                                <p:row>
+                                    <p:column>
+                                        <p:panelGrid columns="2" columnClasses="col11,col22">
+                                            <f:facet name="header">
+                                                <p:row>
+                                                    <p:column rowspan="2">
+                                                        <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}fotoProveedores/#{capaEmpresa.idMuestraInteres.idEmpresa.idPersona.urlImagen}"/>
+                                                    </p:column>
+                                                </p:row>
+                                            </f:facet>
+                                            <h:outputText value="N.I.T.:"/>
+                                            <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.numeroNit}"/>
+                                            <h:outputText value="Razon Social:"/>
+                                            <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.razonSocial}"/>
+                                            <h:outputText value="Departamento:"/>
+                                            <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.codigoDepartamento.nombreDepartamento}"/>
+                                            <h:outputText value="Municipio:"/>
+                                            <h:outputText value="#{capaEmpresa.idMuestraInteres.idEmpresa.idMunicipio.nombreMunicipio}"/>
+                                            <h:outputText value="Capacidad Calificada:" />
+                                            <h:outputText value="#{capaEmpresa.capacidadAcreditada}" >
+                                                <f:convertNumber pattern="#,##0"  />
+                                            </h:outputText>
+                                            <h:outputText value="Capacidad Adjudicada" />
+                                            <h:outputText value="#{capaEmpresa.capacidadAdjudicada}">
+                                                <f:convertNumber pattern="#,##0"  />
+                                            </h:outputText>
+                                        </p:panelGrid>
+                                        <p:panel visible="#{ofertaMB.detalleProceso.idRubroAdq.idRubroInteres eq 3}">
+                                            <p:commandButton  value="Ver Fotos" action="#{ofertaMB.verFotosProductos}" />
+                                        </p:panel>
+                                    </p:column>
+                                    <p:column headerText="Foto" width="160">
+                                        <p:dataTable id="tblDetallePrecio2" widgetVar="tblDetallePrecio2" value="#{ofertaMB.lstPreciosReferencia}" var="precio" 
+                                                     emptyMessage="No se han registrado precios a este proveedor">
+
+                                            <p:column headerText="Item" width="15" id="item">
+                                                <p:outputLabel value="#{precio.noItem}" />
+                                            </p:column>
+
+                                            <p:column headerText="Descripción Item" width="100">
+                                                <p:outputLabel value="#{precio.idProducto.nombreProducto}" id="descripcionItem" />
+                                            </p:column>
+
+                                            <p:column headerText="Nivel Educativo" width="80">
+                                                <p:outputLabel value="#{precio.idNivelEducativo.descripcionNivel}" id="nivelEducativo"/>
+                                            </p:column>
+
+                                            <p:column headerText="Precio U." width="50" styleClass="numero" id="precio">
+                                                <h:outputText value="#{precio.precioReferencia}">
+                                                    <f:convertNumber pattern="###0.00"/>
+                                                </h:outputText>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+
+                        </p:rowExpansion>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+
+            <f:facet name="footer" >
+                <p:commandButton value="Aceptar" icon="fa fa-check-circle" update=":frmPrincipal:tblParticipantes :frmPrincipal:tbEmpresas" 
+                                 action="#{ofertaMB.onSelect}"/>
+                <p:commandButton value="Cancelar" icon="fa fa-times-circle" onclick="PF('dlgProveedor').hide();" />
+            </f:facet>
+
+        </h:form>
+    </h:body>
+</html>
+

@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Listado de Contratos disponibles para crédito</title>
+        <style type="text/css">
+            .col1{
+                height:auto;vertical-align: top; width: 100px;
+            }
+            .col2{
+                height:auto; vertical-align: middle; width: 300px;
+            }
+        </style>
+        <link href="#{request.contextPath}/resources/css/dialog.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/iconos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body>
+        <h:form id="frmFiltroProveedor">
+            <p:dataTable value="#{creditoBancarioController.lstContratosDisponibles}" rowIndexVar="rowId" var="contrato" selectionMode="single"
+                         selection="#{creditoBancarioController.contrato}" rowKey="#{contrato.idContrato}" scrollable="true" scrollHeight="300">
+                <p:column headerText="#" width="20">
+                    #{rowId+1}
+                </p:column>
+                <p:column headerText="Código Entidad">
+                    <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoEntidad}"/>
+                </p:column>
+                <p:column headerText="Nombre">
+                    <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.nombre}"/>
+                </p:column>
+                <p:column headerText="Departamento">
+                    <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.idOferta.codigoEntidad.codigoDepartamento.nombreDepartamento}"/>
+                </p:column>
+                <p:column headerText="Cantidad">
+                    <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.cantidad}"/>
+                </p:column>
+                <p:column headerText="Monto ($)">
+                    <p:outputLabel value="#{contrato.idResolucionAdj.idParticipante.monto}"/>
+                </p:column>
+            </p:dataTable>
+           <br/>
+            <h:panelGrid columns="2">
+                <p:commandButton value="Agregar" icon="fa fa-check-circle" action="#{creditoBancarioController.cerrarDialogCECredito}"/>
+                <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{creditoBancarioController.cerrar}"/>
+            </h:panelGrid>
+        </h:form>
+    </h:body>
+</html>
+

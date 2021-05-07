@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Alerta</title>
+        <style type="text/css">
+            .col1{
+                height:auto;vertical-align: top; width: 100px;
+            }
+            .col2{
+                height:auto; vertical-align: middle; width: 300px;
+            }
+        </style>
+        <link href="#{request.contextPath}/resources/css/dialog.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/iconos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body>
+        <h:form id="frmDialog">
+            <p:panel>
+                <h:panelGrid columns="2">  
+                    <h3>Se eliminará un detalle esta seguro de continuar?</h3>
+                </h:panelGrid>
+                <p:commandButton   value="Si" icon="fa fa-check" action="#{segFisicoController.eliminardetalleContrato}"/>
+                <p:commandButton   value="No" icon="fa fa-ban" action="#{segFisicoController.cancelareliminardetalleContrato}"/>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
+

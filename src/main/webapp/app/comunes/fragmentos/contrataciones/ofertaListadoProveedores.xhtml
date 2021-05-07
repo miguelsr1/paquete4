@@ -1,0 +1,76 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <p:dataViewListItem>
+        <h:panelGrid columns="2" style="width:100%" columnClasses="col10,col2">
+            <p:outputPanel>
+                <h:panelGrid columns="2" cellpadding="5">
+                    <h:outputText value="Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.razonSocial}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+
+                    <h:outputText value="Tipo Proveedor" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.distribuidor eq 1 ? 'PRODUCTOR' : 'DISTRIBUIDOR'}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+
+                    <h:outputText value="Capacidad disponible"/>
+                    <h:outputText value="#{capaEmpresa.capacidadAcreditada - capaEmpresa.capacidadAdjudicada}">
+                        <f:convertNumber pattern="#,###"/>
+                    </h:outputText>
+
+                    <h:outputText value="Porcentaje adjudicación "/>
+                    <h:outputText value="#{capaEmpresa.porcentajeAdjudicacion}" >
+                        <f:convertNumber pattern="#,###.00"/>
+                    </h:outputText>
+
+                    <h:outputText value="Municipio y Departamento:" rendered="#{!menuController.isUsuarioDigitador}"/>
+                    <h:outputText value="#{capaEmpresa.nombreMunicipio}, #{capaEmpresa.nombreDepartamento}" style="font-weight: bold" rendered="#{!menuController.isUsuarioDigitador}"/>
+
+                    <h:outputText value="Porcetaje de cumpliento:" style="font-weight: bold;"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeEvaluacion}" style="font-weight: bold;">
+                        <f:convertNumber pattern="#,##0.00"/>
+                    </h:outputText>
+
+                    <h:outputText value="Porcetaje de cumpliento por Precio:"/>
+                    <h:outputText value="#{capaEmpresa.porcentajePrecio}">
+                        <f:convertNumber pattern="#,##0.000"/>
+                    </h:outputText>
+
+                    <h:outputText value="Porcetaje de cumpliento por Ubicación:"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeGeo}">
+                        <f:convertNumber pattern="#,##0.000"/>
+                    </h:outputText>
+
+                    <h:outputText value="Porcetaje de cumpliento de capacidad-items:" rendered="#{!ofertaMB.detalleProceso.idProcesoAdq.idAnho.anho eq '2021'}"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeCapacidadItem}" rendered="#{!ofertaMB.detalleProceso.idProcesoAdq.idAnho.anho eq '2021'}">
+                        <f:convertNumber pattern="#,##0.000"/>
+                    </h:outputText>
+
+                    <h:outputText value="Porcetaje de cumpliento de capacidad:"/>
+                    <h:outputText value="#{capaEmpresa.porcentajeCapacidad}">
+                        <f:convertNumber pattern="#,##0.000"/>
+                    </h:outputText>
+                </h:panelGrid>
+            </p:outputPanel>
+
+            <p:outputPanel>
+                <h:panelGrid columns="2" style="width: 100%; text-align: center !important;">
+                    <p:commandLink action="#{ofertaMB.onSelect(capaEmpresa.idEmpresa)}" 
+                                   class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+                                   style="height: 30px" update="tblParticipantes tbEmpresas">
+                        <i class="fa fa-check-circle" style="height: 30px"></i>
+                        <f:setPropertyActionListener value="#{capaEmpresa}" target="#{ofertaMB.proveedorSeleccionado}" />
+                    </p:commandLink>
+
+                    <p:commandLink oncomplete="PF('dlgDetalleProveedor').show()" update="dlgDetalleProveedor" style="height: 30px"
+                                   class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only"
+                                   action="#{ofertaMB.cargarDetalleProveedor(capaEmpresa.idEmpresa)}">
+                        <i class="fa fa-eye"></i>
+                    </p:commandLink>
+                </h:panelGrid>
+            </p:outputPanel>
+        </h:panelGrid>
+        <p:separator />
+    </p:dataViewListItem>
+</ui:composition>

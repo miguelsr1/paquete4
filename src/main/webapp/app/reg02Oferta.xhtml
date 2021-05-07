@@ -1,0 +1,253 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
+                        action="#{ofertaMB.prepareCreate}" 
+                        update="pnlFiltro tblParticipantes"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
+                        action="#{ofertaMB.prepareEdit}" 
+                        update="pnlFiltro tblParticipantes"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{ofertaMB.guardar}" 
+                        disabled="#{menuController.usuarioSoloLectura || ofertaMB.deshabilitar}"
+                        update="tblParticipantes"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" action="#{ofertaMB.imprimirDetalleAContratar()}" ajax="false"/>
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h1>
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
+                        <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{ofertaMB.deshabilitar}">
+                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                            <p:ajax update=":frmPrincipal:pnlFiltro tblParticipantes" listener="#{ofertaMB.limpiarFiltros}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
+                        <p:outputPanel id="codigoEntidad" >
+                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{ofertaMB.deshabilitar}" autocomplete="off" 
+                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                <p:ajax event="keyup" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" listener="#{ofertaMB.buscarEntidadEducativa}"/>
+                            </p:inputText>
+                            <p:spacer width="10"/>
+                            <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Fecha de registro:" for="cldFechaApertura" />
+                        <p:calendar id="cldFechaApertura" value="#{ofertaMB.selected.fechaApertura}"  pattern="dd/MM/yyyy" size="11" disabled="#{ofertaMB.deshabilitar}" onkeypress="return disableEnter();" requiredMessage="Fecha de apertura de la oferta" />
+                    </p:panelGrid>
+                </div>
+
+                <div class="card clearfix">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Lista de Proveedores"/>
+                        <p:commandButton id="btoAgregarProveedor" value=" Agregar" icon="fa fa-plus-circle" disabled="#{!ofertaMB.abrirDialogCe}" style="float: right; font-size: 12px;"
+                                         action="#{ofertaMB.abrirDialogProveedor}" update="tbEmpresas pnoCantidad"/>
+                    </h1>
+                    <p:dataTable id="tblParticipantes" value="#{ofertaMB.selected.participantesList}" var="participante" 
+                                 emptyMessage="No se han agregado proveedores" rowIndexVar="rowId" styleClass="ui-datatable-borderless ui-datatable-reflow"
+                                 rowKey="#{participante.idParticipante}" rowStyleClass="#{participante.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
+
+                        <f:facet name="header" class="centradoVertical">
+                            <p:spacer width="10" height="8"/>
+                            <h:commandLink style="float: right;">  
+                                <i class="fa fa-download"></i>
+                                <p:spacer width="10" height="8"/>
+                                <p:dataExporter type="xls" target="tblParticipantes" fileName="centrosComprometidosEnCredito" />
+                                <h:outputText value="Exportar"/>
+                            </h:commandLink>  
+                        </f:facet>
+                        
+                        <p:column headerText="Id" width="40" styleClass="centrado">
+                            <p:outputLabel value="#{participante.idParticipante}" />
+                        </p:column>
+
+                        <p:column headerText="NIT" width="120" rendered="#{!menuController.isUsuarioDigitador}">
+                            <p:outputLabel value="#{participante.idEmpresa.numeroNit}" />
+                        </p:column>
+
+                        <p:column headerText="Proveedor" rendered="#{!menuController.isUsuarioDigitador}">
+                            <p:outputLabel value="#{participante.idEmpresa.razonSocial}" />
+                        </p:column>
+
+                        <p:column headerText="Eliminar" width="40" styleClass="centrado">
+                            <p:commandLink oncomplete="PF('confirmDialog').show();" process="@this" disabled="#{ofertaMB.deshabilitar}">
+                                <p:outputLabel rendered="#{!participante.eliminar}"> <i class="fa fa-trash"></i></p:outputLabel>
+                                <p:outputLabel rendered="#{participante.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                <f:setPropertyActionListener value="#{participante}" target="#{ofertaMB.participanteSeleccionado}"/>  
+                                <f:setPropertyActionListener value="#{rowId}" target="#{ofertaMB.rowEdit}"/>  
+
+                                <f:viewParam name="idParticipante" value="#{participante.idParticipante}"/>
+                            </p:commandLink>
+                        </p:column>
+
+                        <p:column headerText="Ver Oferta" width="40" styleClass="centrado">
+                            <p:commandLink action="#{ofertaMB.editarOfertaParticipante}" disabled="#{ofertaMB.selected.idOferta eq null}">
+                                <f:param name="idParticipante" value="#{participante.idParticipante}"/>
+                                <f:param name="txtCodigoEntidad" value="#{participante.idOferta.codigoEntidad.codigoEntidad}"/>
+                                <i class="fa fa-eye" style="font-size: 17px;"></i>
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+
+        <p:dialog id="dlgImprimir" widgetVar="dlgImprimir" header="Tipo de documento" >
+            <p:panel>
+                <p:outputLabel value="¿Qué tipo de documento desea imprimir?"/>
+                <h:panelGrid columns="2">
+                    <p:selectOneRadio value="#{ofertaMB.tipoDocumentoImp}">
+                        <f:selectItem itemLabel="Análisis Técnico y Económico" itemValue="1" />
+                        <f:selectItem itemLabel="Certificación Presupuestaria" itemValue="2" />
+                    </p:selectOneRadio>
+                </h:panelGrid>
+            </p:panel>
+            <f:facet name="footer">
+                <p:commandButton value="Aceptar" onclick="PF('dlgImprimir').hide();" ajax="false" action="#{ofertaMB.imprimir}"/>
+                <p:commandButton value="Cancelar" ajax="true" onclick="PF('dlgImprimir').hide();"/>
+            </f:facet>
+        </p:dialog>
+
+
+
+        <p:dialog id="dlgProveedor" widgetVar="dlgProveedor" header="Seleccione un proveedor" closable="true" style="font-size: 11px;" modal="true" showEffect="fade" hideEffect="fade" minWidth="1000" width="1000" height="500">
+            <p:outputPanel id="pnoCantidad">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Número de alumnos: "/>
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;">
+                        <f:convertNumber pattern="#,###"/>
+                    </p:outputLabel>
+                    <p:outputLabel value="Número de piezas a contratar: "/>
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos*2}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 4 || ofertaMB.rubro eq 5}">
+                        <f:convertNumber pattern="#,###"/>
+                    </p:outputLabel>
+
+                    <p:outputLabel value="#{ofertaMB.cantidadAlumnos}" style="font-weight: bold;" rendered="#{ofertaMB.rubro eq 2 || ofertaMB.rubro eq 3}">
+                        <f:convertNumber pattern="#,###"/>
+                    </p:outputLabel>
+                </h:panelGrid>
+            </p:outputPanel>
+            <p:spacer width="10"/>
+            <p:tabView id="tbEmpresas" scrollable="true">
+                <p:tab title="Municipio: #{ofertaMB.municipioCe}">
+                    <h:panelGrid columns="2" style="width: 100%;" rendered="#{!menuController.isUsuarioDigitador}">
+                        <h:outputText value="Nombre:"/>
+                        <p:inputText style="width: 100%;" value="#{ofertaMB.nombreEmp}" onkeyup="queryEmpresa(this.value);" />
+                    </h:panelGrid>
+                    <br/>
+                    <p:dataView id="tblEmpresas" var="capaEmpresa" value="#{ofertaMB.lstCapaEmpresas}" 
+                                gridIcon="fa fa-th-large" listIcon="fa fa-bars">
+                        <ui:include src="/app/comunes/fragmentos/contrataciones/ofertaListadoProveedores.xhtml"/>
+                    </p:dataView>
+                </p:tab>
+
+                <p:tab title="Otros Municipios">
+                    <h:panelGrid columns="2" style="width: 100%;" rendered="#{!menuController.isUsuarioDigitador}">
+                        <h:outputText value="Nombre:"/>
+                        <p:inputText style="width: 100%;" value="#{ofertaMB.nombreEmpOtros}" onkeyup="queryEmpresaOtros(this.value);" />
+                    </h:panelGrid>
+                    <br/>
+                    <p:dataView id="tblEmpresasOtras" var="capaEmpresa" value="#{ofertaMB.lstCapaEmpresasOtros}"
+                                gridIcon="fa fa-th-large" listIcon="fa fa-bars">
+                        <ui:include src="/app/comunes/fragmentos/contrataciones/ofertaListadoProveedores.xhtml"/>
+                    </p:dataView>
+                </p:tab>
+            </p:tabView>
+
+            <f:facet name="footer" >
+                <p:commandButton value="Cancelar" icon="fa fa-times-circle" onclick="PF('dlgProveedor').hide();" />
+            </f:facet>
+        </p:dialog>
+
+
+        <p:dialog id="dlgDetalleProveedor" header="#{menuController.isUsuarioDigitador?('PROVE-'.concat(ofertaMB.empresaSeleccionada.idEmpresa)):ofertaMB.empresaSeleccionada.razonSocial}"
+                  showEffect="fade" hideEffect="fade"  widgetVar="dlgDetalleProveedor" width="670" height="550"  >
+            <h:panelGrid columns="1" >
+                <p:tabView>
+                    <p:tab title="Fotos productos"  rendered="#{ofertaMB.rubro eq 3}">
+                        <p:outputPanel id="pnlProductos">
+                            <h:panelGrid columns="2">
+                                <h:outputText value="Seleccione el estilo:"/> 
+                                <p:selectOneMenu value="#{ofertaMB.estiloSeleccionado}">
+                                    <f:selectItems value="#{ofertaMB.lstEstilos}"/>
+                                    <p:ajax update="pnlProductos" listener="#{ofertaMB.cargarFotosPorEstilo}"/>
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <h:panelGroup>
+                                <p:galleria value="#{ofertaMB.images}" var="image" panelHeight="400" style="width: auto;" autoPlay="false">
+                                    <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}#{image}" />
+                                </p:galleria>
+                            </h:panelGroup>
+                        </p:outputPanel>
+                    </p:tab>
+
+                    <p:tab title="Precios de Referencia">
+                        <p:dataTable id="tblDetallePrecio" widgetVar="tblDetallePrecio" value="#{ofertaMB.lstPrecios}" var="precio" 
+                                     emptyMessage="No se han registrado precios a este proveedor" styleClass="ui-datatable-borderless ui-datatable-reflow">
+                            <p:column headerText="Item" width="15" id="item" styleClass="centrado">
+                                <p:outputLabel value="#{precio.noItem}" />
+                            </p:column>
+                            <p:column headerText="Descripción Item" width="100">
+                                <p:outputLabel value="#{precio.nombreProducto}" id="descripcionItem" />
+                            </p:column>
+                            <p:column headerText="Nivel Educativo" width="80">
+                                <p:outputLabel value="#{precio.descripcionNivel}" id="nivelEducativo"/>
+                            </p:column>
+                            <p:column headerText="Precio Máximo" width="50" styleClass="numero" id="precioMax">
+                                <h:outputText value="#{precio.precioMaximo}">
+                                    <f:convertNumber pattern="###0.00"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Precio U." width="50" styleClass="numero" id="precio">
+                                <p:outputLabel rendered="#{precio.precioReferencia lt precio.precioMaximo}">
+                                    <i class="fa fa-arrow-down" aria-hidden="true" style="color: #007ad9"></i>
+                                </p:outputLabel>
+                                <p:spacer width="10"/>
+                                <h:outputText value="#{precio.precioReferencia}">
+                                    <f:convertNumber pattern="###0.00"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+            </h:panelGrid>
+        </p:dialog>
+
+
+        <p:confirmDialog id="confirmDialog" message="¿Esta seguro de eliminar el proveedor seleccionado?" severity="alert" appendTo="@(body)" 
+                         header="Confirmación" widgetVar="confirmDialog" closable="false" showEffect="fade" hideEffect="fade">  
+            <p:commandButton id="confirm" value="Si" icon="fa fa-check-circle" ajax="true" process="@this" actionListener="#{ofertaMB.deleteParticipante}" 
+                             update="tblParticipantes" oncomplete="PF('confirmDialog').hide();"/>  
+            <p:commandButton id="decline" value="No" onclick="PF('confirmDialog').hide();" type="button" icon="fa fa-times-circle"/>
+
+        </p:confirmDialog>
+
+        <!--p:remoteCommand name="findEntidad" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" actionListener="{ofertaMB.buscarEntidadEducativa}" /-->
+        <p:remoteCommand name="findEmpresa" update="tbEmpresas:tblEmpresas" actionListener="#{ofertaMB.filterProveedores()}" />
+        <p:remoteCommand name="findEmpresaOtros" update="tbEmpresas:tblEmpresasOtras" actionListener="#{ofertaMB.filterProveedoresOtros()}" />
+        <p:remoteCommand name="findEmpresaReiniciar" update="tbEmpresas:tblEmpresas tbEmpresas:tblEmpresasOtras" actionListener="#{ofertaMB.filterReiniciarProveedores()}" />
+
+    </ui:define>
+</ui:composition>

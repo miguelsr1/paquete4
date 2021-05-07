@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Detalle del Seguimiento</title>
+        <style type="text/css">
+            .col1{
+                height:auto;vertical-align: top; width: 100px;
+            }
+            .col2{
+                height:auto; vertical-align: middle; width: 300px;
+            }
+            .companyHeaderGrid tr, .companyHeaderGrid td {
+                background: none !important;
+                border-style: none !important;
+            }
+        </style>
+        <link href="#{request.contextPath}/resources/css/dialog.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/iconos.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body>
+        <h:form id="frmDialog">
+            <p:panel id="pnlFiltro2">
+                <f:facet name="header" >
+                    <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                    <p:spacer width="10" height="8"/>
+                    <p:outputLabel value="Datos del detalle"/>
+                </f:facet>
+                <h:panelGrid columns="2"> 
+                    <h:outputText value="Fecha Acta Recepción:"/>
+                    <p:calendar value="#{edicionSeguimientoMB.fechaRecepcionTotal}" pattern="dd/MM/yyyy" size="10" id="fechaRec" required="true" requiredMessage="Fecha de recepcion es obligatoria" navigator="true">
+                        <p:ajax event="dateSelect" listener="#{edicionSeguimientoMB.onDateActaSelectEntregaCompleta}"  update="fechaRec"/>
+                    </p:calendar>
+                    <p:outputLabel value="Tipo Entrega"  rendered="#{edicionSeguimientoMB.mostrarEntregas}"/>
+                    <h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="5" rendered="#{edicionSeguimientoMB.mostrarEntregas}" >
+                        <p:selectOneRadio id="entrega" value="#{edicionSeguimientoMB.tipoEntrega}" required="true" requiredMessage="Selecciones Numero de Entrega" disabled="true">
+                            <f:selectItem itemLabel="1. Primera Entrega" itemValue="1" />
+                            <f:selectItem itemLabel="2. Segunda Entrega" itemValue="2" />
+                        </p:selectOneRadio>
+                    </h:panelGrid>
+                    <p:outputLabel value="Observaciones:" />
+                    <p:inputTextarea id="obs" value="#{edicionSeguimientoMB.observacionesTotal}" />
+                </h:panelGrid>
+
+                <p:messages id="messages" showSummary="false" showDetail="true" closable="true" escape="false">
+                    <p:autoUpdate />
+                </p:messages>
+
+                <p:panel id="itemContrato2" header="Items del contrato">
+                    <h:panelGrid columns="2">
+                        <p:dataTable id="tbl" var="item" value="#{edicionSeguimientoMB.lstDetalleOfertaPendiente}" style="margin-bottom:20px">
+                            <p:column width="23" style="text-align: center;" headerText="No Item">
+                                <h:outputText value="#{item.noItem}" />
+                            </p:column>
+                            <p:column width="45" styleClass="numero" headerText="Cantidad">
+                                <h:outputText value="#{edicionSeguimientoMB.dividirEntreDos?(item.cantidad.divide(2)):item.cantidad}" />
+                            </p:column>
+                            <p:column headerText="Descripción">
+                                <h:outputText value="#{item.consolidadoEspTec}" />
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGrid>
+                </p:panel>
+
+                <h:panelGrid columns="1" id="pnlTotales2">
+                    <p:commandButton id="btnGuardar" value="Guardar" icon="ui-icon-disk" action="#{edicionSeguimientoMB.modificardetalleContratoTotal}" disabled="#{segFisicoController.mensajeAlerta}"/>
+                </h:panelGrid>
+            </p:panel>
+            <p:blockUI block="pnlFiltro2" trigger="btnGuardar" />
+    </h:form>
+</h:body>
+</html>
+

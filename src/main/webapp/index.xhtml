@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes"/>
+        </f:facet>
+        <title>PrimeFaces Paradise</title>
+    </h:head>
+
+    <h:body styleClass="login-body">
+        <h:form>
+            <div class="login-panel ui-fluid">
+                <div class="p-grid p-nogutter">
+                    <div class="p-col-12 logo-container">
+                        <p:graphicImage name="logo_paquete.jpg" library="images" styleClass="logo" />
+
+                        <p:graphicImage name="images/login/icon-login.png" library="paradise-layout"
+                                        styleClass="login-icon"/>
+                    </div>
+                    <p:tabView style="padding: 15px 100px; width: 100%" >
+                        <p:ajax event="tabChange" listener="#{loginController.onTabChange}" />
+                        <p:tab id="tabFuncionario">
+                            <f:facet name="title">
+                                <i class="pi pi-user" style="font-size: 18px;" /> 
+                                <p:spacer width="10"/>
+                                <h:outputText value="Funcionario" style="font-size: 14px;"/>
+                            </f:facet>
+                            <div class="p-col-12">
+                                <p:outputLabel for="username" value="Usuario"/>
+                                <div class="input-wrapper">
+                                    <p:inputText id="username" placeholder="Usuario" value="#{loginController.usuario}"/>
+                                    <p:graphicImage name="images/login/user.png" library="paradise-layout"
+                                                    styleClass="user-icon"/>
+                                </div>
+                            </div>
+                            <div class="p-col-12">
+                                <p:outputLabel for="password" value="Clave de acceso"/>
+                                <div class="input-wrapper">
+                                    <p:password id="password" placeholder="Clave de acceso" feedback="false" value="#{loginController.clave}"/>
+                                    <p:graphicImage name="images/login/lock.png" library="paradise-layout"
+                                                    styleClass="lock-icon"/>
+                                </div>
+                            </div>
+                            <div class="p-col-12 chkbox-container">
+                                <a href="">¿Olvidó su clave de acceso?</a>
+                            </div>
+                        </p:tab>
+                        <p:tab id="tabProveedor">
+                            <f:facet name="title">
+                                <i class="pi pi-id-card" style="font-size: 18px;" /> 
+                                <p:spacer width="10"/>
+                                <h:outputText value="Proveedor" style="font-size: 14px;"/>
+                            </f:facet>
+                            <div class="p-col-12">
+                                <p:outputLabel for="nit" value="N.I.T." />
+                                <div class="input-wrapper">
+                                    <p:inputMask id="nit" mask="9999-999999-999-9" onkeyup="return cUpper(this);" placeholder="0000-000000-000-0" value="#{loginController.usuarioEmp}"/>
+                                    <p:graphicImage name="images/login/user.png" library="paradise-layout"
+                                                    styleClass="user-icon"/>
+                                </div>
+                            </div>
+                            <div class="p-col-12">
+                                <p:outputLabel for="passwordEmp" value="Clave de acceso"  />
+                                <div class="input-wrapper">
+                                    <p:password id="passwordEmp" placeholder="Clave de acceso" feedback="false" value="#{loginController.claveEmp}" />
+                                    <p:graphicImage name="images/login/lock.png" library="paradise-layout"
+                                                    styleClass="lock-icon"/>
+                                </div>
+                            </div>
+                            <div class="p-col-12 chkbox-container">
+
+                                <p:commandLink value="Activar usuario" action="validarProveedor" >
+                                    <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                                </p:commandLink>
+                                <p:commandLink value="¿Olvidó su clave de acceso?" onclick="showDlgCambiarClaveProveedor();" style="float: right; margin-right: 10px"/>
+                            </div>
+                        </p:tab>
+                    </p:tabView>
+
+                    <div class="p-col-12 button-container" style="padding: 15px 100px;">
+                        <p:commandButton  value="Ingresar" styleClass="ui-button-info ui-button-raised" action="#{loginController.isUsuarioValido}" />
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+    <h:outputStylesheet name="css/primeicons.css" library="paradise-layout"/>
+    <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout"/>
+    <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout"/>
+
+</html>
