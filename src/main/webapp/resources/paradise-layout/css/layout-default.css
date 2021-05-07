@@ -1218,7 +1218,7 @@ p:last-child {
   background-size: cover;
   height: auto;
   min-height: 100vh;
-  padding-top: 125px;
+  padding-top: 90px;
 }
 .login-body .login-panel {
   width: 600px;
@@ -1229,12 +1229,12 @@ p:last-child {
   /*padding: 15px 100px;*/
 }
 .login-body .login-panel .p-col-12.logo-container {
-  padding: 40px 40px 30px 40px;
+  padding: 20px 20px 11px 20px;
   border-bottom: 8px solid #dee4e9;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 .login-body .login-panel .p-col-12.logo-container .logo {
-  height: 70px;
+  height: 62px;
 }
 .login-body .login-panel .p-col-12.logo-container .login-icon {
   float: right;
@@ -2240,7 +2240,7 @@ body {
   padding: 0;
   margin: 0;
   min-height: 100%;
-  background-color: #F2F8FA;
+  background-color: #111c40;
 }
 body a {
   text-decoration: none;
@@ -2263,7 +2263,7 @@ body a {
 }
 .layout-wrapper .layout-main .layout-content {
   flex: 1 1 auto;
-  padding: 86px 26px 26px;
+  padding: 50px 13px 26px;
   -moz-transition: margin-left 0.3s;
   -o-transition: margin-left 0.3s;
   -webkit-transition: margin-left 0.3s;

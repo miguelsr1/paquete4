@@ -6,8 +6,6 @@ package sv.gob.mined.app.web.util;
 
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import sv.gob.mined.app.web.controller.ParametrosMB;
 import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
@@ -16,8 +14,8 @@ import sv.gob.mined.paquescolar.model.ProcesoAdquisicion;
  *
  * @author misanchez
  */
-@ManagedBean(name = "recuperarProceso")
-@SessionScoped
+@javax.inject.Named
+@javax.enterprise.context.SessionScoped
 public class RecuperarProceso implements Serializable {
 
     private ProcesoAdquisicion procesoAdquisicion = new ProcesoAdquisicion();

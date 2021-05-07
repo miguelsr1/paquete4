@@ -4,81 +4,85 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://java.sun.com/jsf/core"
-    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
-    <ui:define name="content">
-        <p:menubar id="menuBar" styleClass="divSticky"> 
-            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
-                        action="#{ofertaMB.prepareCreate}" 
-                        update="pnlFiltro tblParticipantes"/>
-            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar"
-                        action="#{ofertaMB.prepareEdit}" 
-                        update="pnlFiltro tblParticipantes"/>
-            <p:menuitem value="Guardar" icon="fa fa-save" action="#{ofertaMB.guardar}" 
-                        disabled="#{menuController.usuarioSoloLectura || ofertaMB.deshabilitar}"
-                        update="tblParticipantes"/>
-            <p:menuitem value="Imprimir" icon="fa fa-print" action="#{ofertaMB.imprimirDetalleAContratar()}" ajax="false"/>
-            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="content">.
 
-            <f:facet  name="options">  
-                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-            </f:facet>  
-        </p:menubar>
+        <div class="p-grid">
+            <div class="p-col-12" >
+                <p:menubar id="menuBar" styleClass="divSticky"> 
+                    <p:menuitem value="Nuevo" icon="pi pi-file-o" id="mtmNuevo"
+                                action="#{ofertaMB.prepareCreate}" 
+                                update="pnlFiltro tblParticipantes"/>
+                    <p:menuitem value="Modificar" icon="pi pi-edit" id="mtmModificar"
+                                action="#{ofertaMB.prepareEdit}" 
+                                update="pnlFiltro tblParticipantes"/>
+                    <p:menuitem value="Guardar" icon="pi pi-save" action="#{ofertaMB.guardar}" 
+                                disabled="#{menuController.usuarioSoloLectura || ofertaMB.deshabilitar}"
+                                update="tblParticipantes"/>
+                    <p:menuitem value="Imprimir" icon="pi pi-print" action="#{ofertaMB.imprimirDetalleAContratar()}" ajax="false"/>
+                    <p:menuitem value="Principal" icon="pi pi-home" url="#{request.contextPath}/app/inicial.mined"/>
 
-        <div class="ui-g">
-            <div class="ui-g-12">
-                <div class="card">
-                    <h1>
-                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
-                        <p:spacer width="10" height="8"/>
-                        <p:outputLabel value="Filtro de busqueda"/>
-                    </h1>
-                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col2_label,col10" 
-                                 style="width: 100%; border:0px none; background-color:transparent;"
-                                 styleClass="form-group ui-panelgrid-blank">
-                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
-                        <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{ofertaMB.deshabilitar}">
-                            <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
-                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
-                            <p:ajax update=":frmPrincipal:pnlFiltro tblParticipantes" listener="#{ofertaMB.limpiarFiltros}"/>
-                        </p:selectOneMenu>
+                    <f:facet  name="options">  
+                        <p:commandButton icon="pi pi-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+                    </f:facet>  
+                </p:menubar>
+            </div>
+        </div>
 
-                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                        <p:outputPanel id="codigoEntidad" >
-                            <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{ofertaMB.deshabilitar}" autocomplete="off" 
-                                         requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
-                                <p:ajax event="keyup" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" listener="#{ofertaMB.buscarEntidadEducativa}"/>
-                            </p:inputText>
-                            <p:spacer width="10"/>
-                            <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
-                        </p:outputPanel>
+        <div class="p-grid">
+            <div class="p-col-12" >
+                <div class="card ui-fluid" jsf:id="pnlFiltro">
+                    <h5>Filtro de busqueda</h5>
 
-                        <p:outputLabel value="Fecha de registro:" for="cldFechaApertura" />
-                        <p:calendar id="cldFechaApertura" value="#{ofertaMB.selected.fechaApertura}"  pattern="dd/MM/yyyy" size="11" disabled="#{ofertaMB.deshabilitar}" onkeypress="return disableEnter();" requiredMessage="Fecha de apertura de la oferta" />
-                    </p:panelGrid>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-9">
+                            <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{ofertaMB.deshabilitar}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <p:ajax update=":frmPrincipal:pnlFiltro tblParticipantes" listener="#{ofertaMB.limpiarFiltros}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-9">
+                            <p:outputPanel id="codigoEntidad" >
+                                <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{ofertaMB.deshabilitar}" autocomplete="off" 
+                                             requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                    <p:ajax event="keyup" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" listener="#{ofertaMB.buscarEntidadEducativa}"/>
+                                </p:inputText>
+                                <p:spacer width="10"/>
+                                <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Fecha de registro:" for="cldFechaApertura" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-9">
+                            <p:calendar id="cldFechaApertura" value="#{ofertaMB.selected.fechaApertura}"  pattern="dd/MM/yyyy" size="11" disabled="#{ofertaMB.deshabilitar}" onkeypress="return disableEnter();" requiredMessage="Fecha de apertura de la oferta" />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card clearfix">
-                    <h1>
-                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
-                        <p:spacer width="10"/>
-                        <h:outputText value="Lista de Proveedores"/>
-                        <p:commandButton id="btoAgregarProveedor" value=" Agregar" icon="fa fa-plus-circle" disabled="#{!ofertaMB.abrirDialogCe}" style="float: right; font-size: 12px;"
-                                         action="#{ofertaMB.abrirDialogProveedor}" update="tbEmpresas pnoCantidad"/>
-                    </h1>
+                    <div class="card-header">
+                        <h5>Lista de Proveedores</h5>
+                        <div id="order-tabs-container" class="order-tabs">
+                            <p:commandButton value="Exportar" icon="pi pi-download">  
+                                <p:dataExporter type="xls" target="tblParticipantes" fileName="centrosComprometidosEnCredito" />
+                            </p:commandButton>
+                            <p:spacer width="5"/>
+                            <p:commandButton id="btoAgregarProveedor" value=" Agregar" icon="pi pi-plus-circle" disabled="#{!ofertaMB.abrirDialogCe}" style="float: right; font-size: 12px;"
+                                             action="#{ofertaMB.abrirDialogProveedor}" update="tbEmpresas pnoCantidad"/>
+                        </div>
+                    </div>
+
                     <p:dataTable id="tblParticipantes" value="#{ofertaMB.selected.participantesList}" var="participante" 
                                  emptyMessage="No se han agregado proveedores" rowIndexVar="rowId" styleClass="ui-datatable-borderless ui-datatable-reflow"
                                  rowKey="#{participante.idParticipante}" rowStyleClass="#{participante.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
 
-                        <f:facet name="header" class="centradoVertical">
-                            <p:spacer width="10" height="8"/>
-                            <h:commandLink style="float: right;">  
-                                <i class="fa fa-download"></i>
-                                <p:spacer width="10" height="8"/>
-                                <p:dataExporter type="xls" target="tblParticipantes" fileName="centrosComprometidosEnCredito" />
-                                <h:outputText value="Exportar"/>
-                            </h:commandLink>  
-                        </f:facet>
-                        
                         <p:column headerText="Id" width="40" styleClass="centrado">
                             <p:outputLabel value="#{participante.idParticipante}" />
                         </p:column>
@@ -93,8 +97,8 @@
 
                         <p:column headerText="Eliminar" width="40" styleClass="centrado">
                             <p:commandLink oncomplete="PF('confirmDialog').show();" process="@this" disabled="#{ofertaMB.deshabilitar}">
-                                <p:outputLabel rendered="#{!participante.eliminar}"> <i class="fa fa-trash"></i></p:outputLabel>
-                                <p:outputLabel rendered="#{participante.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                <p:outputLabel rendered="#{!participante.eliminar}"> <i class="pi pi-trash"></i></p:outputLabel>
+                                <p:outputLabel rendered="#{participante.eliminar}"> <i class="pi pi-minus-circle"></i></p:outputLabel>
                                 <f:setPropertyActionListener value="#{participante}" target="#{ofertaMB.participanteSeleccionado}"/>  
                                 <f:setPropertyActionListener value="#{rowId}" target="#{ofertaMB.rowEdit}"/>  
 
@@ -102,11 +106,11 @@
                             </p:commandLink>
                         </p:column>
 
-                        <p:column headerText="Ver Oferta" width="40" styleClass="centrado">
+                        <p:column headerText="Ver" width="40" styleClass="centrado">
                             <p:commandLink action="#{ofertaMB.editarOfertaParticipante}" disabled="#{ofertaMB.selected.idOferta eq null}">
                                 <f:param name="idParticipante" value="#{participante.idParticipante}"/>
                                 <f:param name="txtCodigoEntidad" value="#{participante.idOferta.codigoEntidad.codigoEntidad}"/>
-                                <i class="fa fa-eye" style="font-size: 17px;"></i>
+                                <i class="pi pi-eye" style="font-size: 17px;"></i>
                             </p:commandLink>
                         </p:column>
                     </p:dataTable>
@@ -244,7 +248,6 @@
 
         </p:confirmDialog>
 
-        <!--p:remoteCommand name="findEntidad" update="menuBar tblParticipantes nombreCE cldFechaApertura btoAgregarProveedor" actionListener="{ofertaMB.buscarEntidadEducativa}" /-->
         <p:remoteCommand name="findEmpresa" update="tbEmpresas:tblEmpresas" actionListener="#{ofertaMB.filterProveedores()}" />
         <p:remoteCommand name="findEmpresaOtros" update="tbEmpresas:tblEmpresasOtras" actionListener="#{ofertaMB.filterProveedoresOtros()}" />
         <p:remoteCommand name="findEmpresaReiniciar" update="tbEmpresas:tblEmpresas tbEmpresas:tblEmpresasOtras" actionListener="#{ofertaMB.filterReiniciarProveedores()}" />

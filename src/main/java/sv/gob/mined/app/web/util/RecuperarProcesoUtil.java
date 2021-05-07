@@ -6,6 +6,7 @@
 package sv.gob.mined.app.web.util;
 
 import javax.faces.bean.ManagedProperty;
+import javax.inject.Inject;
 
 /**
  *
@@ -13,7 +14,7 @@ import javax.faces.bean.ManagedProperty;
  */
 public class RecuperarProcesoUtil {
 
-    @ManagedProperty("#{recuperarProceso}")
+    @Inject
     private RecuperarProceso recuperarProceso;
 
     public RecuperarProceso getRecuperarProceso() {
