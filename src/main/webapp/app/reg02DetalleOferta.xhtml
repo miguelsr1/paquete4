@@ -12,7 +12,7 @@
             <div class="p-col-12" >
                 <p:menubar id="menuBar" styleClass="divSticky"> 
                     <p:menuitem value="Nuevo" icon="pi pi-file-o" disabled="true"/>
-                    <p:menuitem value="Modificar" icon="pi pi-edit" action="#{participantesController.prepareEdit}" actionListener="#{ofertaMB.limpiarCampos}" update="pnlFiltro dvDetalle"/>
+                    <p:menuitem value="Modificar" icon="pi pi-fw pi-pencil" action="#{participantesController.prepareEdit}" actionListener="#{ofertaMB.limpiarCampos}" update="pnlFiltro dvDetalle"/>
                     <p:menuitem id="mGuardar" value="Guardar" icon="pi pi-save" action="#{participantesController.update}" includeViewParams="true"
                                 disabled="#{menuController.usuarioSoloLectura || participantesController.modifDesac}">
                         <f:param name="idParticipante" value="#{participantesController.idParticipante}"/>
@@ -20,9 +20,9 @@
                     <p:menuitem value="Imprimir" icon="pi pi-print" ajax="false" disabled="true"/>
                     <p:menuitem value="Principal" icon="pi pi-home" url="#{request.contextPath}/app/inicial.mined"/>
 
-                    <f:facet  name="options">  
-                        <p:commandButton icon="pi pi-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                    </f:facet>  
+                    <p:divider layout="vertical"/>
+
+                    <p:menuitem value="Salir" icon="pi pi-fw pi-power-off" action="#{guestPreferences.logout}"/>
                 </p:menubar>
                 <p:blockUI block="menuBar" trigger="mGuardar" />
             </div>
@@ -34,8 +34,8 @@
                     <h5>Filtro de busqueda</h5>
 
                     <div class="p-field p-grid">
-                        <p:outputLabel value="Rubro de adquisicion:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-9">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);">
                                 <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
                                 <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
@@ -45,8 +45,8 @@
                     </div>
 
                     <div class="p-field p-grid">
-                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-9">
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <p:outputPanel id="codigoEntidad" >
                                 <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{participantesController.deshabilitado}" autocomplete="off" 
                                              requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
@@ -59,8 +59,8 @@
                     </div>
 
                     <div class="p-field p-grid">
-                        <p:outputLabel value="Proveedor:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-9">
+                        <p:outputLabel value="Proveedor:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <p:selectOneMenu id="cboProveedor" value="#{participantesController.idParticipante}" disabled="#{participantesController.deshabilitado}" onkeydown="setaFoco(this);" >
                                 <f:selectItem itemLabel="Seleccione un proveedor" itemValue="" />  
                                 <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idParticipante)):par.idEmpresa.razonSocial}"/>
@@ -153,8 +153,8 @@
 
                             <p:column headerText="Borrar" width="30" style="text-align: center;">
                                 <p:commandLink action="#{participantesController.eliminarDetalle(false)}" update="tblDetalleOferta" disabled="#{participantesController.modifDesac}">
-                                    <p:outputLabel rendered="#{!detalle.eliminar}"> <i class="fa fa-check-circle"></i></p:outputLabel>
-                                    <p:outputLabel rendered="#{detalle.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                    <p:outputLabel rendered="#{!detalle.eliminar}"> <i class="pi pi-trash"></i></p:outputLabel>
+                                    <p:outputLabel rendered="#{detalle.eliminar}"> <i class="pi pi-minus-circle"></i></p:outputLabel>
                                     <f:setPropertyActionListener value="#{detalle}" target="#{participantesController.detalleSeleccionado}"/>  
                                     <f:setPropertyActionListener value="#{rowId}" target="#{participantesController.rowEdit}"/>  
                                 </p:commandLink>
@@ -181,7 +181,7 @@
 
                         <p:spacer width="10" height="25" style="display:#{(participantesController.mostraTblLibros)?'block':'none'}"/>
                         <h3 style="display:#{(participantesController.mostraTblLibros)?'block':'none'}">
-                            <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                            <i class="pi pi-list-ol verde" style="font-size: 16px;"></i>
                             <p:spacer width="10" />
                             <h:outputText value="Detalle de Libros"/>
                             <p:commandButton id="btnAgregarLibro" value="Agregar Libro" icon="fa fa-plus-circle" action="#{participantesController.prepareNewDetalleLibro}" disabled="#{participantesController.modifDesac}" update="tblDetalleOfertaLibros" style="float: right; font-size: 12px;"/>
@@ -253,9 +253,9 @@
                             </p:column>
 
                             <p:column headerText="Borrar" width="30" style="text-align: center;">
-                                <p:commandLink  action="#{participantesController.eliminarDetalle(true)}" update="tblDetalleOfertaLibros" disabled="#{participantesController.modifDesac}">
-                                    <p:outputLabel rendered="#{!detalle.eliminar}"> <i class="fa fa-check-circle"></i></p:outputLabel>
-                                    <p:outputLabel rendered="#{detalle.eliminar}"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                <p:commandLink action="#{participantesController.eliminarDetalle(true)}" update="tblDetalleOfertaLibros" disabled="#{participantesController.modifDesac}">
+                                    <p:outputLabel rendered="#{!detalle.eliminar}"> <i class="pi pi-check-circle"></i></p:outputLabel>
+                                    <p:outputLabel rendered="#{detalle.eliminar}"> <i class="pi pi-minus-circle"></i></p:outputLabel>
                                     <f:setPropertyActionListener value="#{detalle}" target="#{participantesController.detalleSeleccionado}"/>  
                                     <f:setPropertyActionListener value="#{rowId}" target="#{participantesController.rowEdit}"/>  
                                 </p:commandLink>

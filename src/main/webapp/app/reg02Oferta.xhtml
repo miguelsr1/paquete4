@@ -6,7 +6,7 @@
     xmlns:f="http://java.sun.com/jsf/core"
     template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
     xmlns:jsf="http://xmlns.jcp.org/jsf">
-    <ui:define name="content">.
+    <ui:define name="content">
 
         <div class="p-grid">
             <div class="p-col-12" >
@@ -14,19 +14,21 @@
                     <p:menuitem value="Nuevo" icon="pi pi-file-o" id="mtmNuevo"
                                 action="#{ofertaMB.prepareCreate}" 
                                 update="pnlFiltro tblParticipantes"/>
-                    <p:menuitem value="Modificar" icon="pi pi-edit" id="mtmModificar"
+                    <p:menuitem value="Modificar" icon="pi pi-fw pi-pencil" id="mtmModificar"
                                 action="#{ofertaMB.prepareEdit}" 
                                 update="pnlFiltro tblParticipantes"/>
-                    <p:menuitem value="Guardar" icon="pi pi-save" action="#{ofertaMB.guardar}" 
+                    <p:menuitem value="Guardar" icon="pi pi-save" action="#{ofertaMB.guardar}"  id="mGuardar"
                                 disabled="#{menuController.usuarioSoloLectura || ofertaMB.deshabilitar}"
                                 update="tblParticipantes"/>
                     <p:menuitem value="Imprimir" icon="pi pi-print" action="#{ofertaMB.imprimirDetalleAContratar()}" ajax="false"/>
                     <p:menuitem value="Principal" icon="pi pi-home" url="#{request.contextPath}/app/inicial.mined"/>
 
-                    <f:facet  name="options">  
-                        <p:commandButton icon="pi pi-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                    </f:facet>  
+                    <p:divider layout="vertical"/>
+
+                    <p:menuitem value="Salir" icon="pi pi-fw pi-power-off" action="#{guestPreferences.logout}"/>
+
                 </p:menubar>
+                <p:blockUI block="menuBar" trigger="mGuardar" />
             </div>
         </div>
 
@@ -36,8 +38,8 @@
                     <h5>Filtro de busqueda</h5>
 
                     <div class="p-field p-grid">
-                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-9">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{ofertaMB.deshabilitar}">
                                 <f:selectItem itemLabel="Seleccione un rubro" itemValue="null" />
                                 <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
@@ -46,8 +48,8 @@
                         </div>
                     </div>
                     <div class="p-field p-grid">
-                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-9">
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <p:outputPanel id="codigoEntidad" >
                                 <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{ofertaMB.deshabilitar}" autocomplete="off" 
                                              requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
@@ -59,8 +61,8 @@
                         </div>
                     </div>
                     <div class="p-field p-grid">
-                        <p:outputLabel value="Fecha de registro:" for="cldFechaApertura" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
-                        <div class="p-col-12 p-md-9">
+                        <p:outputLabel value="Fecha de registro:" for="cldFechaApertura" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <p:calendar id="cldFechaApertura" value="#{ofertaMB.selected.fechaApertura}"  pattern="dd/MM/yyyy" size="11" disabled="#{ofertaMB.deshabilitar}" onkeypress="return disableEnter();" requiredMessage="Fecha de apertura de la oferta" />
                         </div>
                     </div>

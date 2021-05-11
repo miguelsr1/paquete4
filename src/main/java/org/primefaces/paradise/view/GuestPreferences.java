@@ -15,12 +15,15 @@
  */
 package org.primefaces.paradise.view;
 
-import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.ServletContext;
 
 @Named
 @SessionScoped
@@ -36,46 +39,7 @@ public class GuestPreferences implements Serializable {
 
     private String inputStyle = "outlined";
 
-    private List<ComponentTheme> componentThemes;
 
-    private List<FlatLayout> flatLayouts;
-
-    private List<SpecialLayout> specialLayouts;
-    
-    @PostConstruct
-    public void init() {
-        componentThemes = new ArrayList<>();
-        componentThemes.add(new ComponentTheme("Blue", "blue", "#3984b8"));
-        componentThemes.add(new ComponentTheme("Deep-Purple", "deeppurple", "#B85CC8"));
-        componentThemes.add(new ComponentTheme("Green", "green", "#37a533"));
-        componentThemes.add(new ComponentTheme("Lime", "lime", "#BAD638"));
-        componentThemes.add(new ComponentTheme("Orange", "orange", "#f6ac2b"));
-        componentThemes.add(new ComponentTheme("Purple", "purple", "#7e8dcd"));
-        componentThemes.add(new ComponentTheme("Turquoise", "turquoise", "#39b8b6"));
-        componentThemes.add(new ComponentTheme("Light-Blue", "lightblue", "#63aee2"));
-
-        flatLayouts = new ArrayList<>();
-        flatLayouts.add(new FlatLayout("Default", "default", "#ffffff"));
-        flatLayouts.add(new FlatLayout("Turquoise", "turquoise", "#39b8b6"));
-        flatLayouts.add(new FlatLayout("Blue", "blue", "#3984b8"));
-        flatLayouts.add(new FlatLayout("Deep-Purple", "deeppurple", "#B85CC8"));
-        flatLayouts.add(new FlatLayout("Green", "green", "#37a533"));
-        flatLayouts.add(new FlatLayout("Lime", "lime", "#BAD638"));
-        flatLayouts.add(new FlatLayout("Orange", "orange", "#f6ac2b"));
-        flatLayouts.add(new FlatLayout("Purple", "purple", "#7e8dcd"));
-        flatLayouts.add(new FlatLayout("Red", "red", "#f28a8b"));
-
-        specialLayouts = new ArrayList<>();
-        specialLayouts.add(new SpecialLayout("Bliss", "bliss", "#360033", "#0b8793"));
-        specialLayouts.add(new SpecialLayout("Cheer", "cheer", "#556270", "#ff6b6b"));
-        specialLayouts.add(new SpecialLayout("Crimson", "crimson", "#642b75", "#c6426e"));
-        specialLayouts.add(new SpecialLayout("Deep-Sea", "deepsea", "#2c3e50", "#4ca1af"));
-        specialLayouts.add(new SpecialLayout("Disco", "disco", "#4ecdc4", "#556270"));
-        specialLayouts.add(new SpecialLayout("Horizon", "horizon", "#003973", "#e5e5be"));
-        specialLayouts.add(new SpecialLayout("Opa", "opa", "#3d7eaa", "#ffe47a"));
-        specialLayouts.add(new SpecialLayout("Sunset", "sunset", "#e96443", "#904e95"));
-        specialLayouts.add(new SpecialLayout("Smoke", "smoke", "#5b5b5b", "#5b5b5b"));
-    }
 
     public String getLayout() {
         return layout;
@@ -96,7 +60,7 @@ public class GuestPreferences implements Serializable {
     public String getMenuMode() {
         return this.menuMode;
     }
-    
+
     public void setMenuMode(String menuMode) {
         this.menuMode = menuMode;
     }
@@ -120,20 +84,9 @@ public class GuestPreferences implements Serializable {
     public String getInputStyleClass() {
         return this.inputStyle.equals("filled") ? "ui-input-filled" : "";
     }
-
-    public List<ComponentTheme> getComponentThemes() {
-        return componentThemes;
-    }
-
-    public List<FlatLayout> getFlatLayouts() {
-        return flatLayouts;
-    }
-
-    public List<SpecialLayout> getSpecialLayouts() {
-        return specialLayouts;
-    }
-
+    
     public class ComponentTheme {
+
         String name;
         String file;
         String color;
@@ -158,6 +111,7 @@ public class GuestPreferences implements Serializable {
     }
 
     public class FlatLayout {
+
         String name;
         String file;
         String color;
@@ -182,6 +136,7 @@ public class GuestPreferences implements Serializable {
     }
 
     public class SpecialLayout {
+
         String name;
         String file;
         String color1;
@@ -208,6 +163,18 @@ public class GuestPreferences implements Serializable {
 
         public String getColor2() {
             return color2;
+        }
+    }
+
+    public void logout() {
+        try {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.getExternalContext().getSessionMap().clear();
+            ExternalContext externalContext = context.getExternalContext();
+            externalContext.redirect(((ServletContext) externalContext.getContext()).getContextPath() + "/index.mined");
+            System.gc();
+        } catch (IOException ex) {
+            Logger.getLogger(GuestPreferences.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

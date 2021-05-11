@@ -17,10 +17,10 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
+import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import sv.gob.mined.app.web.util.UtilFile;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.AnhoProcesoEJB;
@@ -29,7 +29,6 @@ import sv.gob.mined.paquescolar.ejb.PagoProveedoresEJB;
 import sv.gob.mined.paquescolar.ejb.ResolucionAdjudicativaEJB;
 import sv.gob.mined.paquescolar.model.Anho;
 import sv.gob.mined.paquescolar.model.Departamento;
-import sv.gob.mined.paquescolar.model.DetalleProcesoAdq;
 import sv.gob.mined.paquescolar.model.EstadoReserva;
 import sv.gob.mined.paquescolar.model.MunicipioAledanho;
 import sv.gob.mined.paquescolar.model.TipoDocPago;
@@ -38,20 +37,20 @@ import sv.gob.mined.paquescolar.model.TipoDocPago;
  *
  * @author desarrllopc2
  */
-@ManagedBean
+@Named
 @ApplicationScoped
 public class CatalogosGeneralesController implements Serializable {
 
     private String version;
     private List<MunicipioAledanho> lstMunicipiosAledanho = new ArrayList();
 
-    @EJB
+    @Inject
     private AnhoProcesoEJB anhoProcesoEJB;
-    @EJB
+    @Inject
     private DatosGeograficosEJB datosGeograficosEJB;
-    @EJB
+    @Inject
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
-    @EJB
+    @Inject
     private PagoProveedoresEJB pagoProveedoresEJB;
 
     public CatalogosGeneralesController() {

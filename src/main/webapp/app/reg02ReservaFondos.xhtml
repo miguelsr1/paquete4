@@ -1,0 +1,198 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+    <ui:define name="content">
+
+        <div class="p-grid">
+            <div class="p-col-12" >
+                <p:menubar id="menuBar"> 
+                    <p:menuitem value="Nuevo" icon="pi pi-file-o" disabled="true"
+                                update="pnlFiltro pnlProveedores"/>
+                    <p:menuitem value="Modificar" icon="pi pi-fw pi-pencil" 
+                                action="#{resolucionesAdjudicativasController.prepareEdit}" 
+                                update="pnlFiltro pnlProveedores pnlFondosCE"/>
+                    <p:menuitem id="mGuardar" value="Guardar" icon="pi pi-save" 
+                                action="#{resolucionesAdjudicativasController.update}" disabled="#{menuController.usuarioSoloLectura}" update="pnlIdResolucion"/>
+                    <p:menuitem value="Imprimir" icon="pi pi-print" disabled="true"/>
+                    <p:menuitem value="Principal" icon="pi pi-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+                    <p:divider layout="vertical"/>
+
+                    <p:menuitem value="Salir" icon="pi pi-fw pi-power-off" action="#{guestPreferences.logout}"/>
+                </p:menubar>        
+                <p:blockUI block="menuBar" trigger="mGuardar" />
+            </div>
+        </div>
+
+        <p:panel visible="false" id="pnlIdResolucion">
+            <f:viewParam name="idResolucion" value="#{resolucionesAdjudicativasController.idResolucionAdj}"/>
+        </p:panel>
+
+
+        <div class="p-grid">
+            <div class="p-col-12" >
+                <div class="card ui-fluid" jsf:id="pnlFiltro">
+                    <h5>Filtro de busqueda</h5>
+
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="#{bundle['compra.rubroAdq']}:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
+                            <p:selectOneMenu id="cboRubro" value="#{ofertaMB.rubro}" disabled="#{resolucionesAdjudicativasController.deshabilitar}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />  
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <p:ajax update=":frmPrincipal:pnlFiltro pnlProveedores pnlFondosCE" listener="#{resolucionesAdjudicativasController.limpiarDatos}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
+                            <p:outputPanel id="codigoEntidad" >
+                                <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{ofertaMB.codigoEntidad}" size="6" disabled="#{resolucionesAdjudicativasController.deshabilitar}" autocomplete="off" 
+                                             requiredMessage="Código de infraestructura" onkeyup="return this.value.length >= 5">
+                                    <p:ajax event="keyup" update="nombreCE cboProveedor pnlProveedores pnlFondosCE" listener="#{ofertaMB.buscarEntidadEducativaRes}" />
+                                </p:inputText>
+                                <p:spacer width="10"/>
+                                <p:outputLabel id="nombreCE" value="#{ofertaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                            </p:outputPanel>
+                        </div>
+                    </div>
+
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Proveedor:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
+                            <p:selectOneMenu id="cboProveedor" value="#{resolucionesAdjudicativasController.idParticipante}" disabled="#{resolucionesAdjudicativasController.deshabilitar}" >
+                                <f:selectItem itemLabel="Seleccione un proveedor" />  
+                                <f:selectItems value="#{ofertaMB.selected.participantesList}" var="par" itemValue="#{par.idParticipante}" itemLabel="#{menuController.isUsuarioDigitador?('PROVE-'.concat(par.idParticipante)):par.idEmpresa.razonSocial}"/>
+                                <p:ajax update="cboEstado pnlProveedores pnlFondosCE idParticipante" listener="#{resolucionesAdjudicativasController.buscarResolucionAdjudicativa}" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Estado de la Reserva:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
+                            <p:selectOneMenu id="cboEstado" value="#{resolucionesAdjudicativasController.idEstadoReserva}" disabled="#{resolucionesAdjudicativasController.deshabilitar}">
+                                <f:selectItem itemLabel="Seleccione un estado" itemValue="" />  
+                                <f:selectItems value="#{catalogosGeneralesController.lstEstadoReserva}" var="estado" itemValue="#{estado.idEstadoReserva}" itemLabel="#{estado.descripcionReserva}"/>
+                            </p:selectOneMenu>
+                        </div>
+
+                        <h:inputHidden id="idParticipante" value="#{resolucionesAdjudicativasController.idParticipante}"/>
+                    </div>
+                </div>           
+            </div>           
+            <div class="p-col-12  p-xl-6" style="padding-top: 0rem !important;padding-right: 0rem !important; text-align: center;">
+                <p:panel id="pnlFondosCE">
+                    <f:facet name="header" >
+                        <i class="fa fa-money blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Saldo de adjudicaciones del Centro Escolar"/>
+                    </f:facet>
+                    <div >
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="a. Montol total asignado:  $" styleClass="p-col-12 p-mb-5 p-md-5 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-7">
+                                <p:outputLabel value="#{resolucionesAdjudicativasController.montoPresupuestado}"/>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="b. Adjudicación acumulada:  $" styleClass="p-col-12 p-mb-5 p-md-5 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-7">
+                                <p:outputLabel value="#{resolucionesAdjudicativasController.montoAdjudicado}"/>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="c. Adjudicacion actual:  $" styleClass="p-col-12 p-mb-5 p-md-5 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-7">
+                                <p:outputLabel value="#{resolucionesAdjudicativasController.montoAdjActual}"/>
+                            </div>
+                            <hr style="width:96%; margin-left:10px; color: black !important; background-color:black !important; border-top: solid black; border-width:1px;"/>
+                        </div>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="d. Saldo:  $" styleClass="p-col-12 p-mb-5 p-md-5 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-7">
+                                <p:outputPanel>
+                                    <p:outputLabel value="#{resolucionesAdjudicativasController.montoSaldo}"/>                               
+                                    <p:graphicImage rendered="#{resolucionesAdjudicativasController.negativo}">
+                                        <i class="pi pi-exclamation-circle red" style="font-size: 14px;"></i>
+                                    </p:graphicImage>
+                                    <p:graphicImage  rendered="#{resolucionesAdjudicativasController.positivo}">
+                                        <i class="pi pi-check-circle green"></i>
+                                    </p:graphicImage>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+            </div>
+            <div class="p-col-12  p-xl-6" style="padding-top: 0rem !important; text-align: center;">
+                <p:panel id="pnlProveedores" >
+                    <f:facet name="header" >
+                        <i class="fa fa-balance-scale naranja" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Saldo del proveedor seleccionado"/>
+                    </f:facet>
+
+                    <div>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="a. Capacidad Calificada:" styleClass="p-col-12 p-mb-5 p-md-5 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-7">
+                                <p:outputLabel value="#{resolucionesAdjudicativasController.saldoPro.capacidadCalificada}"/>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="b. Capacidad. Adjudicada" styleClass="p-col-12 p-mb-5 p-md-5 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-7">
+                                <p:outputLabel value="#{resolucionesAdjudicativasController.saldoPro.capacidadAdjudicada}"/>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="c. Adjudicación Actual" styleClass="p-col-12 p-mb-5 p-md-5 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-7">
+                                <p:outputLabel value="#{resolucionesAdjudicativasController.saldoPro.adjudicadaActual}"/>
+                            </div>
+                            <hr style="width:96%; margin-left:10px; color: black !important; background-color:black !important; border-top: solid black; border-width:1px;"/>
+                        </div>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="d. Saldo de Capacidad" styleClass="p-col-12 p-mb-5 p-md-5 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-7">
+                                <p:outputPanel>
+                                    <p:outputLabel value="#{resolucionesAdjudicativasController.saldoAdjudicacion}"/>
+                                    <p:graphicImage rendered="#{resolucionesAdjudicativasController.negativo}">
+                                        <i class="pi pi-exclamation-circle red" style="font-size: 14px;"></i>
+                                    </p:graphicImage>
+                                    <p:graphicImage  rendered="#{resolucionesAdjudicativasController.positivo}">
+                                        <i class="pi pi-check-circle green"></i>
+                                    </p:graphicImage>
+                                </p:outputPanel>
+                            </div>
+
+                        </div>
+                    </div>
+                </p:panel>
+            </div>
+        </div>
+
+        <!-- DIALOGOS -->
+        <p:dialog header="Observación" id="dlgReversion" widgetVar="dlgReversion" showEffect="puff" hideEffect="puff" modal="true">
+            <h:panelGrid columns="2" >
+                <p:outputLabel value="1. Comentario: "/>
+                <p:inputTextarea value="#{resolucionesAdjudicativasController.comentarioReversion}"/>
+            </h:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{resolucionesAdjudicativasController.revertirReserva}" ajax="false"/>
+                <p:commandButton value="Cancelar" icon="fa fa-times-circle" onclick="PF('dlgReversion').hide();" ajax="true"/>
+            </f:facet>
+        </p:dialog>
+
+        <p:remoteCommand name="findEntidad" update="nombreCE cboProveedor pnlProveedores pnlFondosCE" actionListener="#{ofertaMB.buscarEntidadEducativaRes}" />
+    </ui:define>
+</ui:composition>

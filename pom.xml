@@ -18,6 +18,10 @@
         <owb.version>2.0.20</owb.version>
         <open-pdf.version>1.3.24</open-pdf.version>
         <poi.version>5.0.0</poi.version>
+        
+        <display_version>${project.version}</display_version>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyMMdd:hhmm</maven.build.timestamp.format>
     </properties>
     
     <dependencies>
@@ -127,6 +131,37 @@
         </dependency>
     </dependencies>
     
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Build>${display_version}</Implementation-Build>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <build-time>${timestamp}</build-time>
+                        </manifestEntries>
+                    </archive>
+                    <webResources>                        
+                        <resource>                        
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <filtering>true</filtering>
+                            <targetPath>WEB-INF</targetPath>
+                            <includes>
+                                <include>**/web.xml</include>               
+                            </includes>
+                        </resource>
+                    </webResources> 
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
      
     <repositories>
         <repository>
