@@ -1,0 +1,87 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="mbMenu"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <h1>
+                        <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Filtro de busqueda"/>
+                    </h1>
+                    <p:panelGrid id="panel" columns="2" columnClasses="col2_label,col10" 
+                                 style="width: 100%; border:0px none; background-color:transparent;"
+                                 styleClass="form-group ui-panelgrid-blank">
+                        <p:outputLabel value="Departamento: " />
+                        <p:selectOneMenu id="codigoDepartamento" value="#{graficoController.codigoDepartamento}" >
+                            <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Rubro de adquisición: " />
+                        <p:selectOneMenu id="idRubroInteres" value="#{graficoController.rubroSeg}" >
+                            <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                        </p:selectOneMenu>
+
+                        <p:commandButton action="#{graficoController.buscarTotal}" value="Buscar" id="ingresar" update="pnlDatos "/>
+                    </p:panelGrid>
+
+                </div>
+
+                <div class="card card-w-title">
+                    <h1>
+                        <i class="fa fa-list-ol verde" style="font-size: 16px;"></i>
+                        <p:spacer width="10" />
+                        <p:outputLabel value="Datos"/>
+                    </h1>
+
+                    <p:outputPanel id="pnlDatos" >
+                        <p:dataTable var="avance" value="#{graficoController.listaCapacidad}" emptyMessage="No se ha iniciado el proceso"
+                                     styleClass="ui-datatable-borderless ui-datatable-reflow">  
+                            <f:facet name="header">
+                                <p:spacer width="10" height="8"/>
+                                <h:commandLink style="float:right;">
+                                    <i class="fa fa-download"></i>
+                                    <p:spacer width="10" height="8"/>
+                                    <h:outputText value="Exportar"/>
+                                    <p:dataExporter  type="xls" encoding="ISO-8859-1" target="tblResumenAdj" 
+                                                     fileName="lstAdjTipoEmp_#{catalogosGeneralesController.formatoFechaReporte}" 
+                                                     postProcessor="#{graficoController.resumenAdjudicacionesXls}"/>  
+                                </h:commandLink>
+                            </f:facet>
+
+                            <p:column headerText="Tipo Empresa">  
+                                <h:outputText value="#{avance.nombretipoEmpresa}" />  
+                            </p:column>
+
+                            <p:column headerText="Monto Adjudicado" footerText="Total: #{graficoController.total} " style="text-align: right">  
+                                <h:outputText value="#{avance.totalFormatedo}" />  
+                            </p:column>  
+
+                            <p:column headerText="Total Empresas" footerText="Total: #{graficoController.totalTipoEmp}" style="text-align: right">  
+                                <h:outputText value="#{avance.totaltipoEmp}" >
+                                    <f:convertNumber pattern="#,##0"  />
+                                </h:outputText>
+                            </p:column> 
+                        </p:dataTable>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

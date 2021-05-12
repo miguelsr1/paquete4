@@ -1,0 +1,139 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+    <ui:define name="content">
+        <div class="p-grid">
+            <div class="p-col-12" >
+                <p:menubar id="menuBar"> 
+                    <p:menuitem value="Nuevo" icon="pi pi-file-o" disabled="true"/>
+                    <p:menuitem value="Consultar" icon="pi pi-search" disabled="false" onclick="onClick('btnModificar');"/>
+                    <p:menuitem value="Guardar" icon="pi pi-save" disabled="true"/>
+                    <p:menuitem value="Imprimir" icon="pi pi-print" disabled="true" />
+                    <p:menuitem value="Principal" icon="pi pi-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+                    <p:divider layout="vertical"/>
+
+                    <p:menuitem value="Salir" icon="pi pi-fw pi-power-off" action="#{guestPreferences.logout}"/>
+                </p:menubar>
+            </div>
+        </div>
+
+        <div class="p-grid">
+            <div class="p-col-12" >
+                <div class="card ui-fluid" jsf:id="pnlFiltro">
+                    <ui:include src="/app/comunes/datosGenProveedor.xhtml"/>
+
+                    <p:panel visible="false">
+                        <p:commandButton id="btnModificar" value="ok" actionListener="#{proveedorController.filtroProveedores}">
+                            <p:ajax event="dialogReturn" listener="#{proveedorController.buscarAdjudicacionesProveedor}"  update="pnlFoto adjudicaciones lblNombreEmpresa" />
+                        </p:commandButton>
+                    </p:panel>
+                </div>
+
+                <div class="card card-w-title">
+                    <div class="card-header">
+                        <h5>Resumen de adjudicaciones</h5>
+
+                        <div id="order-tabs-container" class="order-tabs">
+                            <p:commandButton styleClass="p-mr-2 p-mb-2" icon="pi pi-download">
+                                <p:dataExporter  type="xls" encoding="ISO-8859-1" target="tblResumenAdj" 
+                                                 fileName="lstAdjProveedor_#{catalogosGeneralesController.formatoFechaReporte}" 
+                                                 />
+                            </p:commandButton>
+                        </div>
+                    </div>
+
+                    <p:outputPanel id="adjudicaciones">
+                        <p:dataTable id="tblResumenAdj" var="empresa" value="#{proveedorController.lstResumenAdj}" rowIndexVar="rowId" 
+                                     sortBy="#{empresa.estadoEliminacion}" styleClass="ui-datatable-borderless ui-datatable-reflow">
+
+                            <p:column headerText="#" width="20" style="text-align: center;">  
+                                <h:outputText value="#{rowId +1 }" />
+                            </p:column>  
+                            <p:column headerText="Código" width="40">  
+                                <h:outputText value="#{empresa.codigoEntidad}" />  
+                            </p:column>  
+                            <p:column headerText="Nombre">  
+                                <h:outputText value="#{empresa.nombre}" />  
+                            </p:column>  
+                            <p:column headerText="Rubro"  width="160">  
+                                <h:outputText value="#{empresa.rubro}" />  
+                            </p:column>  
+                            <p:column headerText="Cantidad" style="text-align: right" width="50" >  
+                                <h:outputText value="#{empresa.cantidad}" /> 
+                            </p:column> 
+                            <p:column headerText="Monto" style="text-align: right" width="70">  
+                                <h:outputText value="#{empresa.monto}" >
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column> 
+
+                            <p:summaryRow>
+                                <p:column colspan="4" style="text-align:right">
+                                    <h:outputText value="Total:" />
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <h:outputText value="#{proveedorController.totalItems}" style="font-weight: bold;" id="totalCantidad">
+                                        <f:convertNumber pattern="#,##0"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column styleClass="numero">
+                                    <h:outputText value="#{proveedorController.totalMonto}" style="font-weight: bold;" id="total">
+                                        <f:convertNumber pattern="$ #,##0.00"/>
+                                    </h:outputText>
+                                </p:column>
+                            </p:summaryRow>
+                        </p:dataTable> 
+                    </p:outputPanel>
+                    <p:tab title="Detalle de adjudicaciones" rendered="false">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Detalle de adjudicaciones realizadas:     - Exportar datos a excel" style="font-weight: bold"/>
+                            <h:commandLink>  
+                                <p:graphicImage value="#{pageContext.servletContext.contextPath}/resources/imagenes/excel.png" />  
+                                <p:dataExporter  type="xls" encoding="ISO-8859-1" target="tblDetalleAdj" fileName="detalleAdjudicaciones" 
+                                                 postProcessor="#{empresaController.detalleAdjudicacionesXls}"/>  
+                            </h:commandLink> 
+                        </h:panelGrid>
+                        <p:dataTable  id="tblDetalleAdj" var="empresa" value="#{proveedorController.lstDetalleAdj}" >  
+                            <p:column headerText="Departamento">  
+                                <h:outputText value="#{empresa.nombreDepartamento}" />  
+                            </p:column> 
+                            <p:column headerText="Municipio">  
+                                <h:outputText value="#{empresa.nombreMunicipio}" />  
+                            </p:column> 
+                            <p:column headerText="Código" width="40">  
+                                <h:outputText value="#{empresa.codigoEntidad}" />  
+                            </p:column>  
+
+                            <p:column headerText="Nombre" >  
+                                <h:outputText value="#{empresa.nombre}" />  
+                            </p:column>  
+                            <p:column headerText="Producto" width="120" >  
+                                <h:outputText value="#{empresa.nombreProducto}" />  
+                            </p:column>  
+
+                            <p:column headerText="Nivel Educativo">  
+                                <h:outputText value="#{empresa.descripcionNivel}" />  
+                            </p:column>  
+                            <p:column headerText="Cantidad" styleClass="numero" width="40">  
+                                <h:outputText value="#{empresa.cantidad}" />  
+                            </p:column> 
+
+                            <p:column headerText="Fecha Insercion" width="50">  
+                                <h:outputText value="#{empresa.fechaApertura}" > 
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>  
+                            </p:column> 
+                        </p:dataTable> 
+                    </p:tab>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

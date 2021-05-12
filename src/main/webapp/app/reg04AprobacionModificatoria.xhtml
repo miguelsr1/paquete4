@@ -1,0 +1,226 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <p:menubar id="menuBar" styleClass="divSticky"> 
+            <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
+                        update="pnlFiltro" disabled="true"/>
+            <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" 
+                        oncomplete="onClick('btoBuscarC');" action="#{modificatoriaController.prepararEdicion}" 
+                        update="pnlFiltro"/>
+            <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.aprobarModificatoria}" 
+                        ajax="true"/>
+            <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{modificatoriaController.imprimirDocumentos}" />
+            <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+            <f:facet  name="options" class="centradoVertical">  
+                <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+            </f:facet>  
+        </p:menubar>
+
+        <div class="ui-g">
+            <div class="ui-g-12">
+
+                <p:panel header="Seleccionar Contrato" visible="false">
+                    <p:commandButton id="btoBuscarC" action="#{modificatoriaController.mostrarFiltroContrato(true)}">
+                        <p:ajax event="dialogReturn" listener="#{modificatoriaController.onCargarModificativa}" update="pnlFiltro pnlDatos pnlFondosCE"/>
+                    </p:commandButton>
+                </p:panel>
+                <div class="card clearfix ui-g-12 " style="width: 64%;">
+                    <h1>
+                        <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10"/>
+                        <p:outputLabel value="Datos Generales de la Modificativa"/>
+                    </h1>
+                    <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col3_label,col9"
+                                 styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                        <h:outputText value="#{bundle['compra.rubroAdq']}:"/>
+                        <p:outputLabel value="#{catalogosGeneralesController.descripcionRubro(modificatoriaController.idRubro)}" style="font-weight: bold;"/>
+                        <h:outputText value="#{bundle['ce.codEnt']}:"/>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="#{modificatoriaController.contratoSelecionado.codigoEntidad} -" style="font-weight: bold;"/>
+                            <p:outputLabel value="#{modificatoriaController.contratoSelecionado.nombreCe}" style="font-weight: bold;"/>
+                        </h:panelGrid>
+                        <h:outputText value="Proveedor:"/>
+                        <p:outputLabel value="#{modificatoriaController.contratoSelecionado.numeroNit} - #{modificatoriaController.contratoSelecionado.razonSocial}" style="font-weight: bold;"/>
+                        <p:outputLabel value="Tipo de Modificación:" />
+                        <h:outputText value="#{modificatoriaController.descripcionTipoModif}" style="font-weight: bold;"/>
+                        <p:outputLabel value="Estado de la Reserva:" />
+                        <p:selectOneMenu id="cboEstado" value="#{modificatoriaController.idEstadoReserva}">
+                            <f:selectItem itemLabel="Seleccione un estado" itemValue="" />  
+                            <f:selectItems value="#{resolucionesAdjudicativasController.lstEstadoReservaModif}" var="estado" itemValue="#{estado.idEstadoReserva}" itemLabel="#{estado.descripcionReserva}" />
+                        </p:selectOneMenu>
+                        <h:outputText value="Justificación:"/>
+                        <p:inputTextarea value="#{modificatoriaController.resolucionesModificativas.justificacionModificativa}" cols="50" rows="3" readonly="true"/>
+                    </p:panelGrid>
+                </div>
+                <div class="ui-g-12" style="width: 20px;">
+                </div>
+                <div class="card clearfix ui-g-12 ui-lg-4">
+                    <h1>
+                        <i class="fa fa-money blue" style="font-size: 16px;"></i>
+                        <p:spacer width="10" height="8"/>
+                        <p:outputLabel value="Saldo de adjudicaciones del Centro Escolar"/>
+                    </h1>
+
+                    <p:panelGrid id="pnlFondosCE" styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="a. Montol total asignado:"/>
+                            </p:column>
+                            <p:column style="text-align: right">
+                                <p:outputLabel value="#{modificatoriaController.montoPresupuestado}"/>
+                            </p:column>
+                            <p:column />
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="b. Adjudicación acumulada:" />
+                            </p:column>
+                            <p:column style="text-align: right">
+                                <p:outputLabel value="#{modificatoriaController.montoAdjudicado}"/>
+                            </p:column>
+                            <p:column />
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="c. Saldo según modificatoria:" />
+                            </p:column>
+                            <p:column style="text-align: right">
+                                <h:outputText value="#{modificatoriaController.montoAdjActual}">
+                                    <f:convertNumber pattern="#,#00.00"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <p:graphicImage rendered="#{modificatoriaController.montoAdjActual lt 0}">
+                                    <i class="fa fa-info azul" style="font-size: 14px; font-weight: bold;"></i>
+                                </p:graphicImage>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:separator />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="d. Saldo:"/>
+                            </p:column>
+                            <p:column style="text-align: right; font-weight: bold">
+                                <p:outputLabel value="#{modificatoriaController.montoSaldo}"/>
+                            </p:column>
+                            <p:column>                                    
+                                <p:graphicImage rendered="#{modificatoriaController.negativo}">
+                                    <i class="fa fa-exclamation-circle red" style="font-size: 17px;"></i>
+                                </p:graphicImage>
+                                <p:graphicImage  rendered="#{modificatoriaController.positivo}">
+                                    <i class="fa fa-check green" style="font-size: 17px;"></i>
+                                </p:graphicImage>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:graphicImage rendered="#{modificatoriaController.montoAdjActual lt 0}">
+                                    <i class="fa fa-info azul" style="font-size: 14px; font-weight: bold;"></i>
+                                    <p:spacer width="10" height="8"/>
+                                    <h:outputText styleClass="azul" style="font-weight: bold;" value="El monto negativo implica disminuación en el monto original del contrato."/>
+                                </p:graphicImage>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </div>
+                <div class="card clearfix ui-g-12 ui-lg-12">
+                    <p:dataTable id="pnlDatos" value="#{modificatoriaController.lstDetalleModificativas}" var="detalle" 
+                                 rowKey="#{detalle.idDetalleModif}" widgetVar="tblDetalleItems" rowIndexVar="rowId"
+                                 rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}">
+
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column rowspan="2" headerText="No Item" width="25" />
+                                <p:column rowspan="2" headerText="Descripcion" width="220"/>
+                                <p:column colspan="3" headerText="Valores Actuales" />
+                                <p:column colspan="3" headerText="Valores Nuevo" />
+                            </p:row>
+                            <p:row>
+                                <p:column headerText="Cantidad" width="40" />
+                                <p:column headerText="Precio Uni." width="40"/>
+                                <p:column headerText="Total" width="55"/>
+                                <p:column headerText="Cantidad" width="40"/>
+                                <p:column headerText="Precio Uni." width="40"/>
+                                <p:column headerText="Total" width="55"/>
+                            </p:row>
+                        </p:columnGroup>
+                        <p:column id="item">
+                            <h:outputText value="#{detalle.noItem}" />
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <p:outputLabel value="#{detalle.consolidadoEspTec}"  id="descripcionItem"/>
+                        </p:column>
+                        <p:column headerText="Cantidad" styleClass="numero">
+                            <h:outputText value="#{detalle.cantidadOld}"/>
+
+                            <f:facet name="footer">  
+                                <h:outputText value="#{modificatoriaController.cantidadOld}" style="font-weight: bold;" id="cantidadOld"/>
+                            </f:facet>
+                        </p:column>
+                        <p:column headerText="Precio Uni." styleClass="numero">
+                            <h:outputText value="#{detalle.precioUnitarioOld}">
+                                <f:convertNumber pattern="#,##0.00"  />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="subTotal" styleClass="numero">
+                            <h:outputText value="#{detalle.cantidadOld*detalle.precioUnitarioOld}" >
+                                <f:convertNumber pattern="#,##0.00"  />
+                            </h:outputText>
+
+                            <f:facet name="footer">  
+                                <h:outputText value="$ #{modificatoriaController.montoOld}" style="font-weight: bold;" id="montoOld"/>
+                            </f:facet>
+                        </p:column>
+
+                        <!-- NUEVAS CANTIDADES -->
+                        <p:column styleClass="numero">
+                            <h:outputText value="#{detalle.cantidadNew}" >
+                                <f:convertNumber pattern="#,##0"  />
+                            </h:outputText>
+
+                            <f:facet name="footer">  
+                                <h:outputText value="#{modificatoriaController.cantidadNew}" style="font-weight: bold;" id="cantidadNew"/>
+                            </f:facet>
+                        </p:column>
+                        <p:column styleClass="numero">
+                            <h:outputText value="#{detalle.precioUnitarioNew}" id="precioUnitario" >
+                                <f:convertNumber pattern="#,##0.00"  />
+                            </h:outputText>
+                        </p:column>
+                        <p:column styleClass="numero">
+                            <h:outputText value="#{detalle.cantidadNew*detalle.precioUnitarioNew}" id="subTotal" >
+                                <f:convertNumber pattern="#,##0.00"  />
+                            </h:outputText>
+
+                            <f:facet name="footer">  
+                                <h:outputText value="$ #{modificatoriaController.montoNew}" style="font-weight: bold;" id="montoNew"/>
+                            </f:facet>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </div>
+
+
+        <p:dialog header="Información" modal="true" id="dlgPregunta" widgetVar="dlgPregunta">
+            <h:panelGrid columns="2" style="margin-bottom: 10px; margin-top: 10px;">
+                <i class="fa fa-question-circle" aria-hidden="true" style="font-size: 24px;"></i>
+                <p:outputLabel value="¿Desea registra entregas para este contrato?"/>
+            </h:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{modificatoriaController.redirigirAModEntregas()}"/>
+                <p:commandButton value="Cancelar" onclick="PF('dlgPregunta').hide();" icon="fa fa-times-circle" />
+            </f:facet>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

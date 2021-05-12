@@ -508,16 +508,25 @@ public class RptExcel {
         for (int j = 1; j <= sheet.getLastRowNum(); j++) {
             HSSFRow row = sheet.getRow(j);
             for (int i = 0; i < row.getPhysicalNumberOfCells(); i++) {
-                String valor = row.getCell(i).getRichStringCellValue().getString();
-                for (Integer colsNumEntero : colsNumEnteros) {
-                    if (i == colsNumEntero) {
-                        escribirNumero(valor, j, i, styleNumber, true, sheet);
+                String valor = row.getCell(4).toString();
+                if (j > 1) {
+
+                    for (Integer colNumEntero : colsNumEnteros) {
+                        if (i == colNumEntero) {
+                            try {
+                                escribirNumero(valor.substring(0, valor.indexOf(".")), j, i, styleNumber, true, sheet);
+                            } catch (Exception e) {
+                                System.out.println("valor: " + valor);
+                            }
+                        }
                     }
-                }
-                for (Integer colsNumEntero : colsNumDecimal) {
-                    if (i == colsNumEntero) {
-                        escribirNumero(valor, j, i, styleNumber, false, sheet);
+                    for (Integer colNumDecimal : colsNumDecimal) {
+                        if (i == colNumDecimal) {
+                            escribirNumero(valor, j, i, styleNumber, false, sheet);
+                        }
                     }
+                } else {
+                    escribirTexto(valor, i, i, styleNumber, sheet);
                 }
             }
         }

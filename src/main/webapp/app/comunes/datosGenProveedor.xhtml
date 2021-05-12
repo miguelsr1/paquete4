@@ -4,36 +4,59 @@
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:h="http://java.sun.com/jsf/html">
-    <h1>
-        <i class="fa fa-id-card-o" style="font-size: 16px;" aria-hidden="true"></i>
-        <p:spacer width="10" height="8"/>
-        <p:outputLabel id="lblNombreEmpresa" value="Datos de #{proveedorController.empresa.razonSocial}"/>
-    </h1>
+    <h5><p:outputLabel id="lblNombreEmpresa" value="Datos de #{proveedorController.empresa.razonSocial}"/></h5>
     <p:accordionPanel id="pnlFoto">
         <p:tab title="Información General">
-            <p:panelGrid columns="2" columnClasses="col11,col1" 
-                         styleClass="ui-panelgrid-blank form-group form-elements" 
-                         style="border:0px none; background-color:transparent;">
-                <p:panelGrid columns="2" columnClasses="col3_label,col9" style="width: 100%;" styleClass="ui-panelgrid-blank form-group form-elements"  >
-                    <p:outputLabel value="N.I.T.:"/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.numeroNit}" />
-                    <p:outputLabel value="Municipio y Departamento:"/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.idMunicipio.nombreMunicipio} , #{proveedorController.empresa.idMunicipio.codigoDepartamento.nombreDepartamento}" />
-                    <p:outputLabel value="Domicilio: "/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.direccionCompleta}" />
-                    <p:outputLabel value="Teléfonos: "/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.telefonos} , #{proveedorController.empresa.numeroCelular}" />
-                    <p:outputLabel value="Estado de registro: "/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.idEstadoRegistro.descripcionEstado}" />
-                    <p:outputLabel value="Rubro a participar: "/>
-                    <p:outputLabel styleClass="negrita" value="#{proveedorController.nombreRubroProveedor}" />
-                </p:panelGrid>
-                <p:commandLink id="foto" action="#{proveedorController.dlgFotografia}" disabled="#{proveedorController.capacidadInst eq null}">
-                    <p:ajax event="dialogReturn" listener="#{proveedorController.updateFrm}" update="foto"/>
-                    <p:graphicImage rendered="#{proveedorController.showFoto}" value="/DynamicImageServlet?file=#{bundle['path_images']}#{proveedorController.fileName}"/>
-                    <p:graphicImage rendered="#{not proveedorController.showFoto}" url="#{pageContext.servletContext.contextPath}/resources/images/temp/#{proveedorController.fotoProveedor}"/>
-                </p:commandLink>
-            </p:panelGrid>
+            <div class="ui-fluid p-formgrid p-grid">
+
+                <div class="p-col-12  p-xl-8" >
+                    <div class="p-field p-grid">
+                        <p:outputLabel styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">N.I.T.:</p:outputLabel>
+                        <div class="p-col-12 p-md-8">
+                            <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.numeroNit}" />
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0">Municipio y Departamento:</p:outputLabel>
+                        <div class="p-col-12 p-md-8">
+                            <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.idMunicipio.nombreMunicipio} , #{proveedorController.empresa.idMunicipio.codigoDepartamento.nombreDepartamento}" />
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Domicilio: " styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-8">
+                            <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.direccionCompleta}" />
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Teléfonos: " styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-8">
+                            <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.telefonos} , #{proveedorController.empresa.numeroCelular}" />
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Estado de registro: " styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-8">
+                            <p:outputLabel styleClass="negrita" value="#{proveedorController.empresa.idEstadoRegistro.descripcionEstado}" />
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Rubro a participar: " styleClass="p-col-12 p-mb-4 p-md-4 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-8">
+                            <p:outputLabel styleClass="negrita" value="#{proveedorController.nombreRubroProveedor}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="p-col-12  p-xl-4" style="text-align: center;">
+                    <p:commandLink id="foto" action="#{proveedorController.dlgFotografia}" disabled="#{proveedorController.capacidadInst eq null}">
+                        <p:ajax event="dialogReturn" listener="#{proveedorController.updateFrm}" update="foto"/>
+                        <p:graphicImage rendered="#{proveedorController.showFoto}" value="/DynamicImageServlet?file=#{bundle['path_images']}#{proveedorController.fileName}"
+                                        style="box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);margin: 2rem 0;"/>
+                        <p:graphicImage rendered="#{not proveedorController.showFoto}" url="#{pageContext.servletContext.contextPath}/resources/images/temp/#{proveedorController.fotoProveedor}"
+                                        style="box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);margin: 2rem 0;"/>
+                    </p:commandLink>
+                </div>
+            </div>
         </p:tab>
     </p:accordionPanel>
 </ui:composition>

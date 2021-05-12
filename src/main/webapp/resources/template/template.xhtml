@@ -16,6 +16,8 @@
         <title><ui:insert name="title">Paquetes Escolares</ui:insert></title>
         <h:outputScript name="js/layout.js" library="paradise-layout"/>
         <h:outputScript name="js/prism.js" library="paradise-layout"/>
+        <h:outputScript name="funciones.js" library="js"/>
+        <h:outputScript name="calendar-localization.js" library="js"/>
         <ui:insert name="head"/>
 
         <style>
@@ -32,7 +34,7 @@
             <p:growl id="growl" showDetail="true" escape="false" sticky="true" >
                 <p:autoUpdate />
             </p:growl>
-            
+
             <ui:include src="./topbar.xhtml"/>
 
             <div class="layout-main">

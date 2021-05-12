@@ -14,7 +14,10 @@
                 height:auto; vertical-align: middle; width: 75%;
             }
         </style>
-        <h:outputStylesheet name="css/layout-default.css" library="paradise-layout" />
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/demo.css" library="demo"/>
     </h:head>
     <h:body>
         <h:form id="frmFiltroProveedor">
@@ -22,38 +25,65 @@
                 <p:autoUpdate />
             </p:growl>
             <p:panel>
-                <h:panelGrid columns="4" >
-                    <h:outputText value="Valor de busqueda:"/>
-                    <p:inputText value="#{busquedaProveedorMB.valor}" styleClass="textMayuscula" size="40"/>
-                    <h:outputText value="(NIT o Nombre o Representante Legal)"/>
-                    <p:commandButton id="btnBuscar" value="Buscar" icon="fa fa-search" action="#{busquedaProveedorMB.buscarEmpresas}" update="tblEmpresas growl1" />                    
-                </h:panelGrid>
-                <br/><h:outputText value="Resultado:"/><br/>
-                <p:dataTable id="tblEmpresas" value="#{busquedaProveedorMB.lstEmpresas}" var="emp" paginator="true" paginatorPosition="top" 
-                             selectionMode="single" selection="#{busquedaProveedorMB.empresa}" rowKey="#{emp.idEmpresa}" rows="11"
-                             rowIndexVar="id" emptyMessage="Sin registros"  scrollable="true" scrollHeight="300">
-                    <p:ajax event="rowDblselect" listener="#{busquedaProveedorMB.cerrarFiltro}"/>
-                    <p:column headerText="Datos Generales" width="300" >
-                        <p:panelGrid id="pnlFiltro" columns="2" columnClasses="col1,col2" 
-                                     style="width: 100%; border:0px none; background-color:transparent;"
-                                     styleClass="form-group ui-panelgrid-blank">
-                            <h:outputText value="N.I.T.:"/>
-                            <h:outputText value="#{emp.numeroNit}"/>
-                            <h:outputText value="Razon Social:"/>
-                            <h:outputText value="#{emp.razonSocial}"/>
-                            <h:outputText value="Departamento:"/>
-                            <h:outputText value="#{emp.idMunicipio.codigoDepartamento.nombreDepartamento}"/>
-                            <h:outputText value="Municipio:"/>
-                            <h:outputText value="#{emp.idMunicipio.nombreMunicipio}"/>
-                        </p:panelGrid>
-                    </p:column>
-                    <p:column headerText="Foto" width="70" style="text-align: center;">
-                        <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}fotoProveedores/#{emp.idPersona.urlImagen}" />
-                    </p:column>
-                </p:dataTable>
+
+                <div class="p-grid">
+                    <div class="p-col-12">
+                        <div class="card ui-fluid">
+                            <div class="p-field p-grid">
+                                <div class="p-field p-col-12 p-md-2">Valor de busqueda:</div>
+                                <div class="p-field p-col-12 p-md-6">
+                                    <p:inputText value="#{busquedaProveedorMB.valor}" styleClass="textMayuscula" />
+                                </div>
+                                <div class="p-field p-col-12 p-md-3">(NIT o Nombre o Representante Legal)</div>
+                                <div class="p-field p-col-12 p-md-1">
+                                    <p:commandButton id="btnBuscar" icon="pi pi-search" action="#{busquedaProveedorMB.buscarEmpresas}" update="tblEmpresas growl1" />
+                                </div>
+                            </div>
+
+                            <p:outputLabel value="Resultado" style="font-weight: bold;"/>
+                            <p:dataTable id="tblEmpresas" value="#{busquedaProveedorMB.lstEmpresas}" var="emp" paginator="true" paginatorPosition="top" 
+                                         selectionMode="single" selection="#{busquedaProveedorMB.empresa}" rowKey="#{emp.idEmpresa}" rows="11"
+                                         rowIndexVar="id" emptyMessage="Sin registros"  scrollable="true" scrollHeight="300">
+                                <p:ajax event="rowDblselect" listener="#{busquedaProveedorMB.cerrarFiltro}"/>
+                                <p:column headerText="Datos Generales" width="300" >
+                                    <div class="p-field p-grid">
+                                        <p:outputLabel styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0">N.I.T.:</p:outputLabel>
+                                        <div class="p-col-12 p-md-9">
+                                            <h:outputText value="#{emp.numeroNit}"/>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-grid">
+                                        <p:outputLabel styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0">Razon Social:</p:outputLabel>
+                                        <div class="p-col-12 p-md-9">
+                                            <h:outputText value="#{emp.razonSocial}"/>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-grid">
+                                        <p:outputLabel styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0">Departamento:</p:outputLabel>
+                                        <div class="p-col-12 p-md-9">
+                                            <h:outputText value="#{emp.idMunicipio.codigoDepartamento.nombreDepartamento}"/>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-grid">
+                                        <p:outputLabel styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0">Municipio:</p:outputLabel>
+                                        <div class="p-col-12 p-md-9">
+                                            <h:outputText value="#{emp.idMunicipio.nombreMunicipio}"/>
+                                        </div>
+                                    </div>
+                                </p:column>
+                                <p:column headerText="Foto" width="70" style="text-align: center;">
+                                    <p:graphicImage value="/DynamicImageServlet?file=#{bundle['path_images']}fotoProveedores/#{emp.idPersona.urlImagen}" 
+                                                    style="box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);margin: 2rem 0;"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+
                 <f:facet name="footer">
-                    <p:commandButton value="Aceptar" icon="fa fa-check-circle" action="#{busquedaProveedorMB.cerrarFiltro}"/>
-                    <p:commandButton value="Cancelar" icon="fa fa-times-circle" action="#{busquedaProveedorMB.cerrarFiltroPro}"/>
+                    <p:commandButton value="Aceptar" icon="pi pi-check-circle" action="#{busquedaProveedorMB.cerrarFiltro}"/>
+                    <p:spacer width="5"/>
+                    <p:commandButton value="Cancelar" icon="pi pi-times-circle" action="#{busquedaProveedorMB.cerrarFiltroPro}"/>
                 </f:facet>
             </p:panel>
         </h:form>

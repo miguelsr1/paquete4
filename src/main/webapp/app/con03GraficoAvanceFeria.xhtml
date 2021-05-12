@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:define name="head">
+
+        <style type="text/css">
+            .jqplot-xaxis-label, .jqplot-yaxis-label, .jqplot-y2axis-label, .jqplot-x2axis-label {
+                color: #757575; 
+            }
+
+            table.jqplot-table-legend {
+                background-color: #ffffff;
+                color: #757575;
+                border-color: #dce2e7;
+            }
+        </style>
+    </ui:define>
+
+    <ui:composition template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+        <ui:define name="content">
+            <p:menubar id="mbMenu"> 
+                <p:menuitem value="Nuevo" icon="fa fa-file-o" disabled="true"/>
+                <p:menuitem value="Modificar" icon="fa fa-edit" disabled="true"/>
+                <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>  
+            </p:menubar>
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <div class="card">
+                        <h1>
+                            <i class="fa fa-filter blue" style="font-size: 16px;"></i>
+                            <p:spacer width="10"/>
+                            <p:outputLabel value="Filtro de busqueda"/>
+                        </h1>
+
+                        <h:panelGrid columns="4" id="pnlFiltro">
+                            <p:outputLabel value="Departamento: "/>
+                            <p:selectOneMenu id="codigoDepartamento" value="#{consultasContratacionMB.depa}"  required="true" >
+                                <f:selectItem itemLabel="Seleccione un departamento" itemValue="" />
+                                <f:selectItems value="#{catalogosGeneralesController.lstDepartamentos}" var="depa" itemValue="#{depa.codigoDepartamento}" itemLabel="#{depa.codigoDepartamento} - #{depa.nombreDepartamento}"/>
+                            </p:selectOneMenu>
+                            <p:spacer width="8" height="8"/>
+                            <p:commandButton action="#{consultasContratacionMB.buscarAvance}"  update="pnlGraficos" value="Buscar" ajax="true" id="ingresar" icon="ui-icon-search"/>
+                        </h:panelGrid>
+                    </div>
+                    <p:poll interval="30" listener="#{consultasContratacionMB.buscarAvance}" update="pnlGraficos"/>
+                    <div class="card">
+                        <h:panelGroup>
+                            <p:panelGrid id="pnlGraficos" columns="3" columnClasses="col4,col4,col4" 
+                                         style="width: 100%; border:0px none; background-color:transparent;"
+                                         styleClass="form-group ui-panelgrid-blank">
+
+                                <p:panel id="pnlUniformes" visible="#{consultasContratacionMB.mostrarGrafico}" header="Confección de Uniformes">
+                                    <p:commandButton value="Exportar a PNG" onclick="exportChart('grfAvanceUni', 'empUni');" icon="fa fa-download"/>
+                                    <p:chart type="pie" id="grfAvanceUni" model="#{consultasContratacionMB.pieModelUni}" 
+                                             widgetVar="grfAvanceUni" style="width:350px;height:300px;" /> 
+                                    <p:chart type="bar" id="empUni" widgetVar="empUni" model="#{consultasContratacionMB.barModelUni}" 
+                                             style="width:350px;height:300px" /> 
+                                    <p:dataTable value="#{consultasContratacionMB.listaCapacidad}" var="var">
+                                        <p:column headerText="Tipo Empresa">
+                                            <p:outputLabel value="#{var.nombretipoEmpresa}"/>
+                                        </p:column>
+                                        <p:column headerText="Monto Adjudicado ($)" styleClass="numero">
+                                            <p:outputLabel value="#{var.totalFormatedo}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+
+                                <p:panel id="pnlUtiles" visible="#{consultasContratacionMB.mostrarGrafico}" header="Útiles Escolares">
+                                    <p:chart type="pie" id="grfAvanceUti" model="#{consultasContratacionMB.pieModelUti}" 
+                                             style="width:350px;height:300px;" /> 
+                                    <p:chart type="bar" id="empUti" model="#{consultasContratacionMB.barModelUti}" 
+                                             style="width:350px;height:300px" /> 
+
+                                    <p:dataTable value="#{consultasContratacionMB.listaCapacidad}" var="var">
+                                        <p:column headerText="Tipo Empresa">
+                                            <p:outputLabel value="#{var.nombretipoEmpresa}"/>
+                                        </p:column>
+                                        <p:column headerText="Monto Adjudicado ($)" styleClass="numero">
+                                            <p:outputLabel value="#{var.totalFormatedo}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+
+
+                                <p:panel id="pnlZapatos" visible="#{consultasContratacionMB.mostrarGrafico}" header="Zapatos Escolares">
+                                    <p:chart type="pie" id="grfAvanceZap" model="#{consultasContratacionMB.pieModelZap}" 
+                                             style="width:350px;height:300px;" /> 
+                                    <p:chart type="bar" id="empZap" model="#{consultasContratacionMB.barModelZap}" 
+                                             style="width:350px;height:300px"/> 
+
+                                    <p:dataTable value="#{consultasContratacionMB.listaCapacidad}" var="var">
+                                        <p:column headerText="Tipo Empresa">
+                                            <p:outputLabel value="#{var.nombretipoEmpresa}"/>
+                                        </p:column>
+                                        <p:column headerText="Monto Adjudicado ($)" styleClass="numero">
+                                            <p:outputLabel value="#{var.totalFormatedo}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:panel>
+
+                            </p:panelGrid>
+                        </h:panelGroup>
+                    </div>
+                </div>
+            </div>
+
+            <p:dialog widgetVar="dlg" showEffect="fade" modal="true" header="Chart as an Image" resizable="false">
+                <p:outputPanel id="output" layout="block" style="width:500px;height:300px"/>
+            </p:dialog>
+        </ui:define>
+    </ui:composition>
+</html>

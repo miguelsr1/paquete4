@@ -5,7 +5,6 @@
  */
 package sv.gob.mined.app.web.util;
 
-import javax.faces.bean.ManagedProperty;
 import javax.inject.Inject;
 
 /**

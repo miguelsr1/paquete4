@@ -1,0 +1,203 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="#{pageContext.servletContext.contextPath}/resources/template/template.xhtml">
+    <ui:define name="content">
+        <div class="ui-g">
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:menubar> 
+                        <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo"
+                                    update="pnlFiltro" disabled="true"/>
+                        <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" 
+                                    update="pnlFiltro" disabled="true"/>
+                        <p:menuitem value="Guardar" icon="fa fa-save" disabled="true"/>
+                        <p:menuitem value="Imprimir" icon="fa fa-print" disabled="true" />
+                        <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+
+                        <f:facet  name="options" class="centradoVertical">  
+                            <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
+                        </f:facet>  
+                    </p:menubar>
+
+                    <p:panel id="pnlFiltro">
+                        <f:facet name="header" >
+                            <i class="fa fa-file-text-o blue" style="font-size: 16px;"></i>
+                            <p:spacer width="10"/>
+                            <p:outputLabel value="Consulta Detalle de Modificativas"/>
+                        </f:facet>
+                        <h:panelGrid columns="2" >
+                            <p:outputLabel value="Rubro de adquisicion:" />
+                            <p:selectOneMenu id="cboRubro" value="#{modificatoriaController.idRubro}">
+                                <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
+                                <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                <p:ajax update="pnlFiltro" listener="#{modificatoriaController.buscarProceso}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Tipo de consulta:" />
+                            <p:selectOneMenu value="#{modificatoriaController.tipoConsulta}" >
+                                <f:selectItem itemLabel="Seleccione un tipo" itemValue="0" />
+                                <f:selectItem itemLabel="Por Departamento del C.E." itemValue="1" />
+                                <f:selectItem itemLabel="Por Proveedor" itemValue="2" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="Buscar" action="#{modificatoriaController.buscarDetalleModificativas}" update="pnlDetDepartamento pnlDetProveedor"/>
+                        </h:panelGrid>
+                    </p:panel>
+                    <p:panel id="pnlDetDepartamento" header="Detalle Por Departamento"  visible="#{modificatoriaController.tipoConsulta eq 1}">
+                        <p:dataTable value="#{modificatoriaController.lstCeDetModificativas}" var="depa" >
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column rowspan="3" headerText="#" width="8"/>
+                                    <p:column rowspan="3" headerText="Centro Educativo" />
+                                    <p:column rowspan="3" headerText="Codigo" />
+                                    <p:column rowspan="3" headerText="Proveedor" />
+                                    <p:column rowspan="3" headerText="N.I.T." />
+                                    <p:column rowspan="2" colspan="2" headerText="Situacion Actual" />
+                                    <p:column colspan="5" headerText="Modificativa al Contrato" width="300"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" headerText="Tipo Modificacion" width="120"/>
+                                    <p:column rowspan="2" headerText="Cant. Modif." />
+                                    <p:column rowspan="2" headerText="Monto($) Modif." />
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Num. Contrato" />
+                                    <p:column headerText="Monto ($)" />
+                                    <p:column headerText="Error Dig."/>
+                                    <p:column headerText="Error Adj." />
+                                    <p:column headerText="Pro." />
+                                </p:row>
+                            </p:columnGroup>
+
+                            <p:subTable var="detalle" value="#{depa.lstDetalleModificativas}">
+                                <f:facet name="header">
+                                    <h:outputText value="#{depa.nombreDepartamento}" />
+                                </f:facet>
+
+                                <p:column headerText="#" style="text-align: center;" width="5">
+                                    <h:outputText value="#{detalle.numeroRegistro}"/>
+                                </p:column>
+                                <p:column headerText="Centro Educativo">
+                                    <h:outputText value="#{detalle.nombreCe}"/>
+                                </p:column>
+                                <p:column headerText="Codigo">
+                                    <h:outputText value="#{detalle.codigoEntidad}"/>
+                                </p:column>
+                                <p:column headerText="Proveedor">
+                                    <h:outputText value="#{detalle.razonSocial}"/>
+                                </p:column>
+                                <p:column headerText="N.I.T.">
+                                    <h:outputText value="#{detalle.numeroNit}"/>
+                                </p:column>
+                                <p:column headerText="Num. Contrato">
+                                    <h:outputText value="#{detalle.numContrato}"/>
+                                </p:column>
+                                <p:column headerText="Monto ($)" styleClass="numero">
+                                    <h:outputText value="#{detalle.montoContratoActual}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Error Dig." style="text-align: center;">
+                                    <p:selectBooleanCheckbox value="#{detalle.errorDigitacion}" disabled="true"/>
+                                </p:column>
+                                <p:column headerText="Error Adj." style="text-align: center;">
+                                    <p:selectBooleanCheckbox value="#{detalle.errorAdjudicacion}" disabled="true"/>
+                                </p:column>
+                                <p:column headerText="Prorroga" style="text-align: center;">
+                                    <p:selectBooleanCheckbox value="#{detalle.prorroga}" disabled="true"/>
+                                </p:column>
+                                <p:column headerText="Cant. modif." styleClass="numero">
+                                    <h:outputText value="#{detalle.cantidadModificada}">
+                                        <f:convertNumber pattern="#,##0"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Monto($) modif." styleClass="numero">
+                                    <h:outputText value="#{detalle.montoContratoModificado}">
+                                        <f:convertNumber pattern="#,##0.00"/>
+                                    </h:outputText>
+                                </p:column>
+                            </p:subTable>
+                        </p:dataTable>
+                    </p:panel>
+
+                    <p:panel id="pnlDetProveedor" header="Detalle Por Proveedor" visible="#{modificatoriaController.tipoConsulta eq 2}">
+                        <p:dataTable value="#{modificatoriaController.lstProDetModificativas}" var="detalle" rowIndexVar="idRow" >
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column rowspan="3" headerText="#" width="8"/>
+                                    <p:column rowspan="3" headerText="N.I.T." />
+                                    <p:column rowspan="3" headerText="Proveedor" />
+                                    <p:column rowspan="3" headerText="Codigo" />
+                                    <p:column rowspan="3" headerText="Centro Educativo" />
+                                    <p:column rowspan="3" headerText="Departamento" />
+                                    <p:column rowspan="2" colspan="2" headerText="Situacion Actual" />
+                                    <p:column colspan="5" headerText="Modificativa al Contrato" />
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="3" headerText="Tipo Modificacion"/>
+                                    <p:column rowspan="2" headerText="Cantidad Modif." />
+                                    <p:column rowspan="2" headerText="Monto($) Modif." />
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Num. Contrato" />
+                                    <p:column headerText="Monto ($)" />
+                                    <p:column headerText="Error Dig."/>
+                                    <p:column headerText="Error Adj." />
+                                    <p:column headerText="Pro." />
+                                </p:row>
+                            </p:columnGroup>
+
+                            <p:column headerText="#" style="text-align: center;" width="5">
+                                <h:outputText value="#{idRow+1}"/>
+                            </p:column>
+                            <p:column headerText="NIT">
+                                <h:outputText value="#{detalle.numeroNit}"/>
+                            </p:column>
+                            <p:column headerText="Proveedor">
+                                <h:outputText value="#{detalle.razonSocial}"/>
+                            </p:column>
+                            <p:column headerText="Codigo">
+                                <h:outputText value="#{detalle.codigoEntidad}"/>
+                            </p:column>
+                            <p:column headerText="Centro Educativo">
+                                <h:outputText value="#{detalle.nombreCe}"/>
+                            </p:column>
+                            <p:column headerText="Departamento">
+                                <h:outputText value="#{detalle.nombreDepartamento}"/>
+                            </p:column>
+                            <p:column headerText="Num. Contrato">
+                                <h:outputText value="#{detalle.numContrato}"/>
+                            </p:column>
+                            <p:column headerText="Monto ($)" styleClass="numero">
+                                <h:outputText value="#{detalle.montoContratoActual}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Error Dig." style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{detalle.errorDigitacion}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="Error Adj." style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{detalle.errorAdjudicacion}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="Prorroga" style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{detalle.prorroga}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="Cant. modif." styleClass="numero">
+                                <h:outputText value="#{detalle.cantidadModificada}">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Monto($) modif." styleClass="numero">
+                                <h:outputText value="#{detalle.montoContratoModificado}">
+                                    <f:convertNumber pattern="#,##0"/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

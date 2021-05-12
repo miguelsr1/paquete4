@@ -33,6 +33,15 @@
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
     </servlet>
     
+    <servlet>
+        <servlet-name>DynamicImageServlet</servlet-name>
+        <servlet-class>sv.gob.mined.apps.utilitario.servlet.DynamicImageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DynamicImageServlet</servlet-name>
+        <url-pattern>/DynamicImageServlet</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.mined</url-pattern>
