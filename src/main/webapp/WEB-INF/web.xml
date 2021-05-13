@@ -17,6 +17,20 @@
         <param-value>/WEB-INF/primefaces-paradise.taglib.xml</param-value>
     </context-param>
     
+    <context-param>
+        <param-name>com.sun.faces.numberOfViewsInSession</param-name>
+        <param-value>5</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.serializeServerState</param-name>
+        <param-value>false</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>primefaces.MULTI_VIEW_STATE_STORE</param-name>
+        <param-value>client-window</param-value>
+    </context-param>
+    
     <listener>
         <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
     </listener>
@@ -48,12 +62,17 @@
     </servlet-mapping>
     <session-config>
         <session-timeout>
-            30
+            1
         </session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>index.mined</welcome-file>
     </welcome-file-list>
+    
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/viewExpired.mined</location>
+    </error-page>
     
     <mime-mapping>
         <extension>ttf</extension>

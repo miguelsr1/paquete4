@@ -1518,7 +1518,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
         }
     }
 
-    @FacesConverter(forClass = MunicipioDto.class, value = "muniConverter")
+    /*@FacesConverter(forClass = MunicipioDto.class, value = "muniConverter")
     public static class MunicipioControllerConverter implements Converter {
 
         @Override
@@ -1561,7 +1561,7 @@ public class ProveedorController extends RecuperarProcesoUtil implements Seriali
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Municipio.class.getName());
             }
         }
-    }
+    }*/
 
     public void resumenAdjudicacionesXls(Object document) {
         int[] numEnt = {0, 4};

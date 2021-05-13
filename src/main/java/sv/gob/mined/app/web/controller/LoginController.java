@@ -39,6 +39,7 @@ public class LoginController implements Serializable {
     private String usuarioEmp;
     private String claveEmp;
     private String tabActivo;
+    
     @Inject
     private LoginEJB loginEJB;
     @Inject

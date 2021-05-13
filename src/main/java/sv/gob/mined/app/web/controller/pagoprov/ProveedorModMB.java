@@ -8,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -19,10 +18,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,7 +31,6 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
@@ -1366,7 +1361,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
         }
     }
 
-    @FacesConverter(forClass = MunicipioDto.class, value = "muniConverter")
+    /*@FacesConverter(forClass = MunicipioDto.class, value = "muniConverter")
     public static class MunicipioControllerConverter implements Converter {
 
         @Override
@@ -1410,7 +1405,7 @@ public class ProveedorModMB extends RecuperarProcesoUtil implements Serializable
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Municipio.class.getName());
             }
         }
-    }
+    }*/
 
     public void resumenAdjudicacionesXls(Object document) {
         int[] numEnt = {0, 4};

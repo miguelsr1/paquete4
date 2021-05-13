@@ -1303,7 +1303,7 @@ p:last-child {
   min-height: 100vh;
 }
 .exception-body.error {
-  background-image: url("#{resource['paradise-layout:images/exception/error-bg.png']}");
+  background-color: #1d1d4c;
 }
 .exception-body.access {
   background-image: url("#{resource['paradise-layout:images/exception/access-bg.png']}");
@@ -1334,7 +1334,8 @@ p:last-child {
   width: 40px;
 }
 .exception-body .exception-panel .exception-panel-footer {
-  padding: 25px 50px 50px 50px;
+  padding: 25px 50px 20px 50px;
+  text-align: center;
 }
 
 @media (max-width: 640px) {
