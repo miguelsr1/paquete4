@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -119,13 +118,13 @@ public class ModificatoriaController extends RecuperarProcesoUtil implements Ser
     private List<VwDepartamentoModificativas> lstCeDetModificativas = new ArrayList();
     private List<VwDetalleModificativas> lstProDetModificativas = new ArrayList();
 
-    @Dependent
+    @Inject
     private ModificativaEJB modificativaEJB;
-    @Dependent
+    @Inject
     private ResolucionAdjudicativaEJB resolucionAdjudicativaEJB;
-    @Dependent
+    @Inject
     private UtilEJB utilEJB;
-    @Dependent
+    @Inject
     private ProveedorEJB proveedorEJB;
 
     /**

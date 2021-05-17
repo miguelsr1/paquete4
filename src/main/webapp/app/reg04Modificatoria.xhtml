@@ -10,20 +10,20 @@
         <div class="p-grid">
             <div class="p-col-12" >
                 <p:menubar id="menuBar" styleClass="divSticky"> 
-                    <p:menuitem value="Nuevo" icon="fa fa-file-o" id="mtmNuevo" oncomplete="onClick('btoBuscarC');"
+                    <p:menuitem value="Nuevo" icon="pi pi-file-o" id="mtmNuevo" oncomplete="onClick('btoBuscarC');"
                                 update="pnlFiltro" action="#{modificatoriaController.validarProcesoAdquisicion}"
                                 actionListener="#{modificatoriaController.prepararCreacion}"/>
-                    <p:menuitem value="Modificar" icon="fa fa-edit" id="mtmModificar" oncomplete="onClick('btoBuscarC');"
+                    <p:menuitem value="Modificar" icon="pi pi-fw pi-pencil" id="mtmModificar" oncomplete="onClick('btoBuscarC');"
                                 action="#{modificatoriaController.validarProcesoAdquisicion}" 
                                 actionListener="#{modificatoriaController.prepararEdicion}"
                                 update="pnlFiltro"/>
-                    <p:menuitem value="Guardar" icon="fa fa-save" action="#{modificatoriaController.guardar}" ajax="true"/>
-                    <p:menuitem value="Imprimir" icon="fa fa-print" ajax="false" action="#{ofertaMB.imprimirAnalisisEconomico}" />
-                    <p:menuitem value="Principal" icon="fa fa-home" url="#{request.contextPath}/app/inicial.mined"/>
+                    <p:menuitem value="Guardar" icon="pi pi-save" action="#{modificatoriaController.guardar}" ajax="true"/>
+                    <p:menuitem value="Imprimir" icon="pi pi-print" ajax="false" action="#{ofertaMB.imprimirAnalisisEconomico}" />
+                    <p:menuitem value="Principal" icon="pi pi-home" url="#{request.contextPath}/app/inicial.mined"/>
 
-                    <f:facet  name="options" class="centradoVertical">  
-                        <p:commandButton icon="fa fa-sign-out" value="Salir" action="#{guestPreferences.logout}"/>
-                    </f:facet>  
+                    <p:divider layout="vertical"/>
+
+                    <p:menuitem value="Salir" icon="pi pi-fw pi-power-off" action="#{guestPreferences.logout}"/>
                 </p:menubar>
             </div>
         </div>
@@ -85,167 +85,177 @@
 
                 </div>
 
-                <div class="card ui-fluid">
+                <div class="card ui-fluid" jsf:id="pnlDatos" >
                     <h5>Detalle de la Modificatoria</h5>
-                    <p:outputPanel id="pnlDatos" >
-                        <f:facet name="header" >
-                            <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
+                    <p:outputPanel  id="pnlMsjInfo" style="display:#{(modificatoriaController.msjInformacion.length()>0)?'block':'none'}" styleClass="ui-messages-info">
+                        <i class="fa fa-info-circle blue" style="font-size: 12px;">
                             <p:spacer width="10" height="8"/>
-                            <p:outputLabel value="Detalle de la Modificatoria"/>
-                        </f:facet>
+                            <p:outputLabel styleClass="ayuda-descripcion" value="#{modificatoriaController.msjInformacion}" escape="false" /> 
+                        </i>
+                    </p:outputPanel>
 
-                        <p:outputPanel  id="pnlMsjInfo" style="display:#{(modificatoriaController.msjInformacion.length()>0)?'block':'none'}" styleClass="ui-messages-info">
-                            <i class="fa fa-info-circle blue" style="font-size: 12px;">
-                                <p:spacer width="10" height="8"/>
-                                <p:outputLabel styleClass="ayuda-descripcion" value="#{modificatoriaController.msjInformacion}" escape="false" /> 
-                            </i>
-                        </p:outputPanel>
+                    <p:panel visible="false">
+                        <p:inputText id="idContrato" value="#{modificatoriaController.idContratoTemp}"/>
+                    </p:panel>
 
-                        <p:panel visible="false">
-                            <p:inputText id="idContrato" value="#{modificatoriaController.idContratoTemp}"/>
-                        </p:panel>
-
-                        <h:panelGrid columns="2">
-                            <h:outputText value="Tipo de Modificación:"/>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Tipo de Modificación:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <p:selectOneMenu id="cboTipoModif" value="#{modificatoriaController.idTipoModif}">
                                 <f:selectItem itemLabel="Seleccione un valor"/>
                                 <f:selectItems value="#{modificatoriaController.lstTipoModifContratos}" var="idTipoModif" itemValue="#{idTipoModif.idModifContrato}" itemLabel="#{idTipoModif.descripcionModificativa}"/>
                                 <p:ajax update="pnlDatos tblDetalleItems pnlMsjInfo" listener="#{modificatoriaController.deshabilitarAcciones}" process="@this,pnlDatos"/>
                             </p:selectOneMenu>
-                            <h:outputText value="Fecha de Orden Inicio:" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Fecha de Orden Inicio:" rendered="#{modificatoriaController.idTipoModif ne 13}" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <p:calendar locale="es" value="#{modificatoriaController.fechaOrdenInicio}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                            <h:outputText value="Fecha de Solicitud:"/>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Fecha de Solicitud:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-10">
                             <h:panelGroup>
                                 <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaSolicitud}" pattern="dd/MM/yyyy" size="10"/>
                                 <p:spacer width="13" height="8"/>
-                                <h:outputText value="Fecha de Orden Inicio:" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
+                                <p:outputLabel value="Fecha de Orden Inicio:" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
                                 <p:spacer width="8" height="8" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
                                 <p:calendar locale="es" value="#{modificatoriaController.fechaOrdenInicio}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif eq 13}"/>
 
-                                <h:outputText value="Fecha de Nota:" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                                <p:outputLabel value="Fecha de Nota:" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
                                 <p:spacer width="8" height="8" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
                                 <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaNota}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
                                 <p:spacer width="13" height="8" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
-                                <h:outputText value="Fecha de Resolucion" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
+                                <p:outputLabel value="Fecha de Resolucion" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
                                 <p:spacer width="8" height="8" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
                                 <p:calendar locale="es" value="#{modificatoriaController.resolucionesModificativas.fechaResolucion}" pattern="dd/MM/yyyy" size="10" rendered="#{modificatoriaController.idTipoModif ne 13}"/>
                             </h:panelGroup>
-
-                            <h:outputText value="Prorroga:" rendered="#{modificatoriaController.idTipoModif eq 4}"/>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid"> 
+                        <h:outputText value="Prorroga:" rendered="#{modificatoriaController.idTipoModif eq 4}" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <h:panelGroup rendered="#{modificatoriaController.idTipoModif eq 4}">
                                 <p:inputText value="#{modificatoriaController.resolucionesModificativas.diasProrroga}" size="5" style="text-align: right;" />
                                 <p:spacer width="10" height="8"/>
-                                <h:outputText value="(Numero de dias)" rendered="#{modificatoriaController.idTipoModif eq 4}"/>
+                                <p:outputLabel value="(Numero de dias)" rendered="#{modificatoriaController.idTipoModif eq 4}"/>
                             </h:panelGroup>
-                            <h:outputText value="Justificación:"/>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Justificación:" styleClass="p-col-12 p-mb-2 p-md-2 p-mb-md-0"/>
+                        <div class="p-col-12 p-md-6">
                             <p:inputTextarea value="#{modificatoriaController.resolucionesModificativas.justificacionModificativa}" cols="50" rows="3"/>
-                        </h:panelGrid>
+                        </div>
+                    </div>
 
-                        <p:dataTable value="#{modificatoriaController.lstDetalleModificativas}" var="detalle" editable="true" editMode="cell" id="tblDetalleItems"
-                                     rowKey="#{detalle.idDetalleModif}" widgetVar="tblDetalleItems" rowIndexVar="rowId"
-                                     rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}" emptyMessage="No hay registros">
+                    <p:dataTable value="#{modificatoriaController.lstDetalleModificativas}" var="detalle" editable="true" editMode="cell" id="tblDetalleItems"
+                                 rowKey="#{detalle.idDetalleModif}" widgetVar="tblDetalleItems" rowIndexVar="rowId"
+                                 rowStyleClass="#{detalle.estadoEliminacion eq 1 ? 'filaEliminada' : null}" emptyMessage="No hay registros">
 
-                            <p:ajax event="cellEdit" listener="#{modificatoriaController.onCellEdit}" onsuccess="updateDetalleOferta();"/>
+                        <p:ajax event="cellEdit" listener="#{modificatoriaController.onCellEdit}" onsuccess="updateDetalleOferta();"/>
 
-                            <f:facet name="header" >  
-                                <p:commandButton styleClass="p-mr-2 p-mb-2" value="Agregar" icon="pi pi-plus-circle" action="#{modificatoriaController.agregarItem}" 
-                                                 update="tblDetalleItems" disabled="#{modificatoriaController.deshabilitarAgregar}"/>
+                        <f:facet name="header" >  
+                            <p:commandButton styleClass="p-mr-2 p-mb-2" value="Agregar" icon="pi pi-plus-circle" action="#{modificatoriaController.agregarItem}" 
+                                             update="tblDetalleItems" disabled="#{modificatoriaController.deshabilitarAgregar}" style="width: 120px"/>
+                        </f:facet>
+
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column rowspan="2" headerText="No Item" width="25" />
+                                <p:column rowspan="2" headerText="Descripcion" width="220"/>
+                                <p:column colspan="3" headerText="Valores Actuales" />
+                                <p:column colspan="3" headerText="Valores Nuevo" />
+                                <p:column rowspan="2" headerText="Borrar"/>
+                            </p:row>
+                            <p:row>
+                                <p:column headerText="Cantidad" width="40" />
+                                <p:column headerText="Precio Uni." width="40"/>
+                                <p:column headerText="Total" width="55"/>
+                                <p:column headerText="Cantidad" width="40"/>
+                                <p:column headerText="Precio Uni." width="40"/>
+                                <p:column headerText="Total" width="55"/>
+                            </p:row>
+                        </p:columnGroup>
+                        <p:column id="item">
+                            <p:cellEditor>  
+                                <f:facet name="output">
+                                    <h:outputText value="#{detalle.noItem}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{detalle.noItem}" size="10" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <p:outputLabel value="#{detalle.consolidadoEspTec}"  id="descripcionItem"/>
+                        </p:column>
+                        <p:column headerText="Cantidad" styleClass="numero">
+                            <h:outputText value="#{detalle.cantidadOld}"/>
+
+                            <f:facet name="footer">  
+                                <h:outputText value="#{modificatoriaController.cantidadOld}" style="font-weight: bold;" id="cantidadOld"/>
                             </f:facet>
+                        </p:column>
+                        <p:column headerText="Precio Uni." styleClass="numero">
+                            <h:outputText value="#{detalle.precioUnitarioOld}">
+                                <f:convertNumber pattern="#,##0.00"  />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="subTotal" styleClass="numero">
+                            <h:outputText value="#{detalle.cantidadOld*detalle.precioUnitarioOld}" >
+                                <f:convertNumber pattern="#,##0.00"  />
+                            </h:outputText>
 
-                            <p:columnGroup type="header">
-                                <p:row>
-                                    <p:column rowspan="2" headerText="No Item" width="25" />
-                                    <p:column rowspan="2" headerText="Descripcion" width="220"/>
-                                    <p:column colspan="3" headerText="Valores Actuales" />
-                                    <p:column colspan="3" headerText="Valores Nuevo" />
-                                    <p:column rowspan="2" headerText="Borrar"/>
-                                </p:row>
-                                <p:row>
-                                    <p:column headerText="Cantidad" width="40" />
-                                    <p:column headerText="Precio Uni." width="40"/>
-                                    <p:column headerText="Total" width="55"/>
-                                    <p:column headerText="Cantidad" width="40"/>
-                                    <p:column headerText="Precio Uni." width="40"/>
-                                    <p:column headerText="Total" width="55"/>
-                                </p:row>
-                            </p:columnGroup>
-                            <p:column id="item">
-                                <p:cellEditor>  
-                                    <f:facet name="output">
-                                        <h:outputText value="#{detalle.noItem}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputText value="#{detalle.noItem}" size="10" />
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
-                            <p:column headerText="Descripción">
-                                <p:outputLabel value="#{detalle.consolidadoEspTec}"  id="descripcionItem"/>
-                            </p:column>
-                            <p:column headerText="Cantidad" styleClass="numero">
-                                <h:outputText value="#{detalle.cantidadOld}"/>
+                            <f:facet name="footer">  
+                                <h:outputText value="$ #{modificatoriaController.montoOld}" style="font-weight: bold;" id="montoOld"/>
+                            </f:facet>
+                        </p:column>
 
-                                <f:facet name="footer">  
-                                    <h:outputText value="#{modificatoriaController.cantidadOld}" style="font-weight: bold;" id="cantidadOld"/>
+                        <!-- NUEVAS CANTIDADES -->
+                        <p:column styleClass="numero">
+                            <p:cellEditor>  
+                                <f:facet name="output">
+                                    <h:outputText value="#{detalle.cantidadNew}" >
+                                        <f:convertNumber pattern="#,##0"  />
+                                    </h:outputText>
                                 </f:facet>
-                            </p:column>
-                            <p:column headerText="Precio Uni." styleClass="numero">
-                                <h:outputText value="#{detalle.precioUnitarioOld}">
-                                    <f:convertNumber pattern="#,##0.00"  />
-                                </h:outputText>
-                            </p:column>
-                            <p:column headerText="subTotal" styleClass="numero">
-                                <h:outputText value="#{detalle.cantidadOld*detalle.precioUnitarioOld}" >
-                                    <f:convertNumber pattern="#,##0.00"  />
-                                </h:outputText>
-
-                                <f:facet name="footer">  
-                                    <h:outputText value="$ #{modificatoriaController.montoOld}" style="font-weight: bold;" id="montoOld"/>
+                                <f:facet name="input">
+                                    <p:inputNumber minValue="0" maxValue="2000" decimalPlaces="0" value="#{detalle.cantidadNew}" disabled="#{detalle.estadoEliminacion eq 1 || modificatoriaController.deshabilitarCantidad}" inputStyle="text-align: right;"/>
                                 </f:facet>
-                            </p:column>
+                            </p:cellEditor>
 
-                            <!-- NUEVAS CANTIDADES -->
-                            <p:column styleClass="numero">
-                                <p:cellEditor>  
-                                    <f:facet name="output">
-                                        <h:outputText value="#{detalle.cantidadNew}" >
-                                            <f:convertNumber pattern="#,##0"  />
-                                        </h:outputText>
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputNumber minValue="0" maxValue="2000" decimalPlaces="0" value="#{detalle.cantidadNew}" disabled="#{detalle.estadoEliminacion eq 1 || modificatoriaController.deshabilitarCantidad}" inputStyle="text-align: right;"/>
-                                    </f:facet>
-                                </p:cellEditor>
+                            <f:facet name="footer">  
+                                <h:outputText value="#{modificatoriaController.cantidadNew}" style="font-weight: bold;" id="cantidadNew"/>
+                            </f:facet>
+                        </p:column>
+                        <p:column styleClass="numero">
+                            <h:outputText value="#{detalle.precioUnitarioNew}" id="precioUnitario" >
+                                <f:convertNumber pattern="#,##0.00"  />
+                            </h:outputText>
+                        </p:column>
+                        <p:column styleClass="numero">
+                            <h:outputText value="#{detalle.cantidadNew*detalle.precioUnitarioNew}" id="subTotal" >
+                                <f:convertNumber pattern="#,##0.00"  />
+                            </h:outputText>
 
-                                <f:facet name="footer">  
-                                    <h:outputText value="#{modificatoriaController.cantidadNew}" style="font-weight: bold;" id="cantidadNew"/>
-                                </f:facet>
-                            </p:column>
-                            <p:column styleClass="numero">
-                                <h:outputText value="#{detalle.precioUnitarioNew}" id="precioUnitario" >
-                                    <f:convertNumber pattern="#,##0.00"  />
-                                </h:outputText>
-                            </p:column>
-                            <p:column styleClass="numero">
-                                <h:outputText value="#{detalle.cantidadNew*detalle.precioUnitarioNew}" id="subTotal" >
-                                    <f:convertNumber pattern="#,##0.00"  />
-                                </h:outputText>
+                            <f:facet name="footer">  
+                                <h:outputText value="$ #{modificatoriaController.montoNew}" style="font-weight: bold;" id="montoNew"/>
+                            </f:facet>
+                        </p:column>
 
-                                <f:facet name="footer">  
-                                    <h:outputText value="$ #{modificatoriaController.montoNew}" style="font-weight: bold;" id="montoNew"/>
-                                </f:facet>
-                            </p:column>
+                        <p:column headerText="Borrar" width="7" style="text-align: center;">
+                            <p:commandLink  action="#{modificatoriaController.eliminarDetalle}" update="tblDetalleItems" disabled="#{modificatoriaController.deshabilitarEliminar}">
+                                <p:outputLabel rendered="#{!detalle.eliminar}" id="ok"> <i class="fa fa-check-circle"></i></p:outputLabel>
+                                <p:outputLabel rendered="#{detalle.eliminar}" id="remover"> <i class="fa fa-minus-circle"></i></p:outputLabel>
+                                <f:setPropertyActionListener value="#{detalle}" target="#{modificatoriaController.detalleSeleccionado}"/>  
+                                <f:setPropertyActionListener value="#{rowId}" target="#{modificatoriaController.rowEdit}"/>  
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
 
-                            <p:column headerText="Borrar" width="7" style="text-align: center;">
-                                <p:commandLink  action="#{modificatoriaController.eliminarDetalle}" update="tblDetalleItems" disabled="#{modificatoriaController.deshabilitarEliminar}">
-                                    <p:outputLabel rendered="#{!detalle.eliminar}" id="ok"> <i class="fa fa-check-circle"></i></p:outputLabel>
-                                    <p:outputLabel rendered="#{detalle.eliminar}" id="remover"> <i class="fa fa-minus-circle"></i></p:outputLabel>
-                                    <f:setPropertyActionListener value="#{detalle}" target="#{modificatoriaController.detalleSeleccionado}"/>  
-                                    <f:setPropertyActionListener value="#{rowId}" target="#{modificatoriaController.rowEdit}"/>  
-                                </p:commandLink>
-                            </p:column>
-                        </p:dataTable>
-                    </p:outputPanel>
                     <p:remoteCommand name="updateDetalleOferta" action="#{modificatoriaController.updateFilaDetalle}"/>
                 </div>
             </div>

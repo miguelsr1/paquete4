@@ -21,7 +21,6 @@ import org.primefaces.model.menu.DefaultSubMenu;
 import sv.gob.mined.app.web.util.JsfUtil;
 import sv.gob.mined.app.web.util.VarSession;
 import sv.gob.mined.paquescolar.ejb.MenuEJB;
-import sv.gob.mined.paquescolar.ejb.UtilEJB;
 import sv.gob.mined.paquescolar.model.Usuario;
 
 /**
@@ -35,6 +34,7 @@ public class MenuController implements Serializable {
     private Boolean usuarioSoloLectura = false;
     private String codigoDepartamento;
     private String tipoUsuario;
+    private String app;
 
     private DefaultMenuModel model;
     private Usuario usuario;
@@ -65,6 +65,14 @@ public class MenuController implements Serializable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="getter-setter">    
+    public String getApp() {
+        return app;
+    }
+
+    public void setApp(String app) {
+        this.app = app;
+    }
+
     public Boolean getUsuarioSoloLectura() {
         return usuarioSoloLectura;
     }
@@ -194,16 +202,34 @@ public class MenuController implements Serializable {
                     return false;
                 default:
                     return true;
-
             }
         } else {
 
             return (usuario.getIdTipoUsuario().getIdTipoUsuario().intValue() != 1);
         }
     }
-    
-    public void cerrarSession(){
+
+    public void cerrarSession() {
         ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).invalidate();
         JsfUtil.redirectToIndex();
+    }
+
+    public String selectOpcion() {
+        String url = "";
+        int idPersona = Integer.parseInt(VarSession.getVariableSession("idPersona").toString());
+        int appModulo = Integer.parseInt(app);
+        //lstOpciones = menuEJB.getListaOpcionesByIdPersonaAndModulo(idPersona, appModulo);
+
+        if (lstOpciones.isEmpty()) {
+            JsfUtil.mensajeError("No tiene derechos para ingresar a este modulo");
+        } else {
+            Character tipoAcceso = menuEJB.getTipoAcceso(idPersona, appModulo);
+            if (tipoAcceso != null) {
+                VarSession.setVariableSession("tipoAcceso", tipoAcceso);
+            }
+            url = "/app/comunes/inicial";
+            armarMenu();
+        }
+        return url;
     }
 }

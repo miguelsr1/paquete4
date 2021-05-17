@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
     <h:head>
         <title>Busqueda de Contratos</title>
         <style type="text/css">
@@ -37,145 +38,143 @@
             .colorAjax {
                 color: #0000ff;
             }
-
             .a {
                 color: #21b384;
                 text-decoration: none;
             }
-            .col12{width: 100%;}
-            .col11{width: 91.67%;}
-            .col10{width: 83.33%;}
-            .col9{width: 75%;}
-            .col8{width: 66.67%;}
-            .col7{width: 58.33%;}
-            .col6{width: 50%;}
-            .col5{width: 41.67%;}
-            .col4{width: 33.33%;}
-            .col4_label{width: 33.33%;text-align: right;}
-            .col3{width: 25%;}
-            .col3_label{width: 25%;text-align: right;}
-            .col2{width: 16.67%;}
-            .col2_label{width: 16.67%;text-align: right;}
-            .col1{width: 8.33%;}
         </style>
-        <h:outputStylesheet name="css/layout-default.css" library="paradise-layout" />
+        <h:outputScript name="js/layout.js" library="paradise-layout"/>
+        <h:outputScript name="js/prism.js" library="paradise-layout"/>
+        <h:outputScript name="funciones.js" library="js"/>
         <h:outputScript name="calendar-localization.js" library="js"/>
-        <h:outputScript name="funciones-1.js" library="js"/>
     </h:head>
     <h:body>
         <h:form id="frmDialog">
-            <p:panel id="pnlFiltro" header="Filtro de búsqueda" toggleable="true">
-                <f:facet name="header" >
-                    <i class="fa fa-filter blue" style="font-size: 16px;"></i>
-                    <p:spacer width="10" height="8"/>
-                    <p:outputLabel value="Filtro de busqueda"/>
-                </f:facet>
-                <p:panelGrid columns="2" columnClasses="col3_label,col9"
-                             styleClass="ui-panelgrid-blank form-group form-elements" style="border:0px none; background-color:transparent;">
-                    <p:outputLabel value="#{bundle['compra.rubroAdq']}:" />
-                    <p:selectOneMenu id="cboRubro" value="#{filtroContratoModificativaMB.idRubro}">
-                        <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
-                        <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
-                        <p:ajax update="pnlFiltro" listener="#{filtroContratoModificativaMB.buscarProceso}" />
-                    </p:selectOneMenu>
-
-                    <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" />
-                    <p:outputPanel id="codigoEntidad" >
-                        <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{filtroContratoModificativaMB.codigoEntidad}" size="5" autocomplete="off" requiredMessage="Codigo de infraestructura"
-                                     onkeyup="return this.value.length >= 5">
-                            <p:ajax event="keyup" update="nombreCE" listener="#{filtroContratoModificativaMB.buscarEntidadEducativa}"/>
-                        </p:inputText>
-                        <p:spacer width="10"/>
-                        <p:outputLabel id="nombreCE" value="#{filtroContratoModificativaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
-                    </p:outputPanel>
-
-                    <p:commandButton value="Buscar" icon="fa fa-search" action="#{filtroContratoModificativaMB.buscarContratos}" update="pnlDatos"/>  
-                    <p:ajaxStatus id="ajaxIcon" style="width:160px;height:16px;">
-                        <f:facet name="start">
-                            <i class="fa fa-spinner fa-pulse colorAjax" style="font-size: 20px; font-weight: bold;"></i>
-                            <p:spacer width="10" height="8"/>
-                            <p:outputLabel value="Espere por favor.." />
-                        </f:facet>
-
-                        <f:facet name="complete">
-                            <h:outputText value="" />
-                        </f:facet>
-                    </p:ajaxStatus>
-
-                </p:panelGrid>
-            </p:panel>
-            <p:messages id="growl" showDetail="true" escape="false" closable="true">
-                <p:autoUpdate />
-            </p:messages>
-            <p:panel header="Listado de contratos" id="pnlDatos">
-                <f:facet name="header" >
-                    <i class="fa fa-list-ol blue" style="font-size: 16px;"></i>
-                    <p:spacer width="10" height="8"/>
-                    <p:outputLabel value="Listado de contratos"/>
-                    <p:commandButton action="#{filtroContratoModificativaMB.selectContrato}" value="Aceptar" icon="fa fa-check" style="float: right;"/>
-                </f:facet>
-                <p:dataTable id="tblContratos" widgetVar="tblContratos" value="#{filtroContratoModificativaMB.lstContratos}" var="contrato" 
-                             rowIndexVar="rowId" rowKey="#{contrato.idContrato}"
-                             emptyMessage="No se encontrarón coincidencias con los criterios de búsqueda" 
-                             rowStyleClass="#{contrato.idResolucionAdj eq 4 ? 'filaEliminada' : null}"> 
-
-                    <p:ajax event="rowToggle" listener="#{filtroContratoModificativaMB.onRowToggle}"  />
-
-                    <p:column style="width:16px;">
-                        <p:rowToggler />
-                    </p:column>
-                    <p:column headerText="#" style="text-align: center" width="15">
-                        #{rowId+1}
-                    </p:column>
-                    <p:column headerText="Núm. Contrato" width="100">
-                        <h:outputText value="ME-#{contrato.numeroContrato}"/>
-                    </p:column>
-                    <p:column headerText="N.I.T. proveedor" width="110">
-                        <h:outputText value="#{contrato.numeroNit}"/>
-                    </p:column>
-                    <p:column headerText="Proveedor">
-                        <h:outputText value="#{contrato.razonSocial}"/>
-                    </p:column>
-
-                    <p:rowExpansion styleClass="textCenter">
-                        <div align="center">
-                            <p:dataTable id="tblDetalleContrato" widgetVar="tblDetalleContrato"
-                                         value="#{filtroContratoModificativaMB.lstContratoModificatorias}" var="detalle" 
-                                         rowIndexVar="rowIdDetalle" style="width: 650px;" selectionMode="single"
-                                         rowKey="#{detalle.idRow}">
-
-                                <p:ajax event="rowSelect"  listener="#{filtroContratoModificativaMB.onContratoChosen}"/>
-                                <p:ajax event="rowDblselect"  listener="#{filtroContratoModificativaMB.onSelectedContrato}"/>
-
-                                <p:column headerText="#" width="5" style="text-align: center">
-                                    #{rowIdDetalle eq 0 ? "" :(rowIdDetalle)}
-                                </p:column>
-                                <p:column headerText="Fecha Inserción" width="60" style="text-align: center">
-                                    <h:outputText value="#{detalle.fechaInsercion}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
-                                    </h:outputText>
-                                </p:column>
-                                <p:column headerText='Descripcion Contrato' >
-                                    <h:outputText value="#{detalle.descripcionReserva}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
-                                    </h:outputText>
-                                </p:column>
-                                <p:column headerText="Cantidad contratada" styleClass="numero" width="50">
-                                    <h:outputText value="#{detalle.cantidad}">
-                                        <f:convertNumber pattern="#,##0"/>
-                                    </h:outputText>
-                                </p:column>
-                                <p:column headerText="Monto contratado" styleClass="numero" width="50">
-                                    <h:outputText value="#{detalle.monto}">
-                                        <f:convertNumber pattern="#,##0.00"/>
-                                    </h:outputText>
-                                </p:column>
-                            </p:dataTable>
+            <div class="p-grid">
+                <div class="p-col-12" >
+                    <div class="card ui-fluid" jsf:id="pnlFiltro">
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="#{bundle['compra.rubroAdq']}:" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-9">
+                                <p:selectOneMenu id="cboRubro" value="#{filtroContratoModificativaMB.idRubro}">
+                                    <f:selectItem itemLabel="Seleccione un rubro" itemValue="" />
+                                    <f:selectItems value="#{parametrosMB.lstRubros}" var="rubro" itemValue="#{rubro.idRubroInteres}" itemLabel="#{rubro.descripcionRubro}" />
+                                    <p:ajax update="pnlFiltro" listener="#{filtroContratoModificativaMB.buscarProceso}" />
+                                </p:selectOneMenu>
+                            </div>
                         </div>
-                    </p:rowExpansion>
-                </p:dataTable>
-            </p:panel>
+                        <div class="p-field p-grid">
+                            <p:outputLabel value="#{bundle['ce.codEnt']}:" for="txtCodigoEntidad" styleClass="p-col-12 p-mb-3 p-md-3 p-mb-md-0"/>
+                            <div class="p-col-12 p-md-9">
+                                <p:outputPanel id="codigoEntidad" >
+                                    <p:inputText id="txtCodigoEntidad" maxlength="5" value="#{filtroContratoModificativaMB.codigoEntidad}" size="5" autocomplete="off" requiredMessage="Codigo de infraestructura"
+                                                 onkeyup="return this.value.length >= 5">
+                                        <p:ajax event="keyup" update="nombreCE" listener="#{filtroContratoModificativaMB.buscarEntidadEducativa}"/>
+                                    </p:inputText>
+                                    <p:spacer width="10"/>
+                                    <p:outputLabel id="nombreCE" value="#{filtroContratoModificativaMB.entidadEducativa.nombre}" style="font-weight: bold"/>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <div class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">
+                                <p:commandButton value="Buscar" icon="pi pi-search" action="#{filtroContratoModificativaMB.buscarContratos}" update="pnlDatos"/>  
+                            </div>
+                            <div class="p-col-12 p-md-10">
+                                <p:ajaxStatus id="ajaxIcon" style="width:160px;height:16px;">
+                                    <f:facet name="start">
+                                        <i class="pi pi-spinner pi-pulse colorAjax" style="font-size: 20px; font-weight: bold;"></i>
+                                        <p:spacer width="10" height="8"/>
+                                        <p:outputLabel value="Espere por favor.." />
+                                    </f:facet>
+
+                                    <f:facet name="complete">
+                                        <h:outputText value="" />
+                                    </f:facet>
+                                </p:ajaxStatus>
+                            </div>
+                        </div>
+
+                        <p:messages id="growl" showDetail="true" escape="false" closable="true">
+                            <p:autoUpdate />
+                        </p:messages>
+                        <p:panel header="Listado de contratos" id="pnlDatos">
+                            <f:facet name="header" >
+                                <p:spacer width="10" height="8"/>
+                                <p:outputLabel value="Listado de contratos"/>
+                                <p:commandButton action="#{filtroContratoModificativaMB.selectContrato}" value="Aceptar" icon="pi pi-check" style="float: right; width: 100px !important"/>
+                            </f:facet>
+                            <p:dataTable id="tblContratos" widgetVar="tblContratos" value="#{filtroContratoModificativaMB.lstContratos}" var="contrato" 
+                                         rowIndexVar="rowId" rowKey="#{contrato.idContrato}"
+                                         emptyMessage="No se encontrarón coincidencias con los criterios de búsqueda" 
+                                         rowStyleClass="#{contrato.idResolucionAdj eq 4 ? 'filaEliminada' : null}"> 
+
+                                <p:ajax event="rowToggle" listener="#{filtroContratoModificativaMB.onRowToggle}"  />
+
+                                <p:column style="width:16px;">
+                                    <p:rowToggler />
+                                </p:column>
+                                <p:column headerText="#" style="text-align: center" width="15">
+                                    #{rowId+1}
+                                </p:column>
+                                <p:column headerText="Núm. Contrato" width="100">
+                                    <h:outputText value="ME-#{contrato.numeroContrato}"/>
+                                </p:column>
+                                <p:column headerText="N.I.T. proveedor" width="110">
+                                    <h:outputText value="#{contrato.numeroNit}"/>
+                                </p:column>
+                                <p:column headerText="Proveedor">
+                                    <h:outputText value="#{contrato.razonSocial}"/>
+                                </p:column>
+
+                                <p:rowExpansion styleClass="textCenter">
+                                    <div align="center">
+                                        <p:dataTable id="tblDetalleContrato" widgetVar="tblDetalleContrato"
+                                                     value="#{filtroContratoModificativaMB.lstContratoModificatorias}" var="detalle" 
+                                                     rowIndexVar="rowIdDetalle" style="width: 650px;" selectionMode="single"
+                                                     rowKey="#{detalle.idRow}">
+
+                                            <p:ajax event="rowSelect"  listener="#{filtroContratoModificativaMB.onContratoChosen}"/>
+                                            <p:ajax event="rowDblselect"  listener="#{filtroContratoModificativaMB.onSelectedContrato}"/>
+
+                                            <p:column headerText="#" width="5" style="text-align: center">
+                                                #{rowIdDetalle eq 0 ? "" :(rowIdDetalle)}
+                                            </p:column>
+                                            <p:column headerText="Fecha Inserción" width="60" style="text-align: center">
+                                                <h:outputText value="#{detalle.fechaInsercion}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText='Descripcion Contrato' >
+                                                <h:outputText value="#{detalle.descripcionReserva}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Cantidad contratada" styleClass="numero" width="50">
+                                                <h:outputText value="#{detalle.cantidad}">
+                                                    <f:convertNumber pattern="#,##0"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Monto contratado" styleClass="numero" width="50">
+                                                <h:outputText value="#{detalle.monto}">
+                                                    <f:convertNumber pattern="#,##0.00"/>
+                                                </h:outputText>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:rowExpansion>
+                            </p:dataTable>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
         </h:form>
+
+        <h:outputStylesheet name="personalizadas.css" library="css"/>
+        <h:outputStylesheet name="css/primeicons.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/primeflex.min.css" library="paradise-layout"/>
+        <h:outputStylesheet name="css/demo.css" library="demo"/>
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="paradise-layout"/>
     </h:body>
 </html>
 

@@ -39,53 +39,68 @@
             <div class="layout-main">
                 <div class="layout-content">
                     <div class="p-grid dashboard">
-                        <div class="p-col-6 p-md-4 p-xl-2">
-                            <div class="card overview-box" style="text-align: center !important">
-                                <h5>Contratos</h5>
-                                <p:graphicImage name="contrato.png"    library="images"  width="80"/>
-
-                            </div>
+                        <div class="p-col-6 p-md-4 p-xl-3">
+                            <p:commandLink action="#{menuController.selectOpcion}">
+                                <div class="card overview-box" style="text-align: center !important">
+                                    <h5>Contratos</h5>
+                                    <p:graphicImage name="contrato.png" library="images"  width="80"/>
+                                </div>
+                                <f:setPropertyActionListener target="#{menuController.app}" value="2" />
+                            </p:commandLink>
                         </div>
-                        <div class="p-col-6 p-md-4 p-xl-2">
-                            <div class="card overview-box"  style="text-align: center !important">
-                                <h5>Modificativa</h5>
-                                <p:graphicImage name="modificativa.png" library="images"  width="80"/>
-
-                            </div>
+                        <div class="p-col-6 p-md-4 p-xl-3">
+                            <p:commandLink action="#{menuController.selectOpcion}">
+                                <div class="card overview-box"  style="text-align: center !important">
+                                    <h5>Modificativa</h5>
+                                    <p:graphicImage name="modificativa.png" library="images"  width="80"/>
+                                </div>
+                                <f:setPropertyActionListener target="#{menuController.app}" value="2" />
+                            </p:commandLink>
                         </div>
-                        <div class="p-col-6 p-md-4 p-xl-2">
-                            <div class="card overview-box"  style="text-align: center !important">
-                                <h5>Recepción</h5>
-                                <p:graphicImage name="recepcion.png" library="images" width="80"/>
-
-                            </div>
+                        <div class="p-col-6 p-md-4 p-xl-3">
+                            <p:commandLink action="#{menuController.selectOpcion}">
+                                <div class="card overview-box"  style="text-align: center !important">
+                                    <h5>Recepción</h5>
+                                    <p:graphicImage name="recepcion.png" library="images" width="80"/>
+                                </div>
+                                <f:setPropertyActionListener target="#{menuController.app}" value="2" />
+                            </p:commandLink>
                         </div>
-                        <div class="p-col-6 p-md-4 p-xl-2">
-                            <div class="card overview-box" style="text-align: center !important">
-                                <h5>Pagos</h5>
-                                <p:graphicImage name="pago.png" library="images" width="80"/>
-
-                            </div>
+                        <div class="p-col-6 p-md-4 p-xl-3">
+                            <p:commandLink action="#{menuController.selectOpcion}">
+                                <div class="card overview-box" style="text-align: center !important">
+                                    <h5>Pagos</h5>
+                                    <p:graphicImage name="pago.png" library="images" width="80"/>
+                                </div>
+                                <f:setPropertyActionListener target="#{menuController.app}" value="2" />
+                            </p:commandLink>
                         </div>
-                        <div class="p-col-6 p-md-4 p-xl-2">
-                            <div class="card overview-box"  style="text-align: center !important">
-                                <h5>Proveedores</h5>
-                                <p:graphicImage name="proveedor.png" library="images" width="80"/>
-
-                            </div>
+                        <div class="p-col-6 p-md-4 p-xl-3">
+                            <p:commandLink action="#{menuController.selectOpcion}">
+                                <div class="card overview-box"  style="text-align: center !important">
+                                    <h5>Proveedores</h5>
+                                    <p:graphicImage name="proveedor.png" library="images" width="80"/>
+                                </div>
+                                <f:setPropertyActionListener target="#{menuController.app}" value="2" />
+                            </p:commandLink>
                         </div>
-                        <div class="p-col-6 p-md-4 p-xl-2">
-                            <div class="card overview-box" style="text-align: center !important">
-                                <h5>Reportes</h5>
-                                <p:graphicImage name="reporte.png" library="images" width="80"/>
-
-                            </div>
+                        <div class="p-col-6 p-md-4 p-xl-3">
+                            <p:commandLink action="#{menuController.selectOpcion}">
+                                <div class="card overview-box" style="text-align: center !important">
+                                    <h5>Reportes</h5>
+                                    <p:graphicImage name="reporte.png" library="images" width="80"/>
+                                </div>
+                                <f:setPropertyActionListener target="#{menuController.app}" value="2" />
+                            </p:commandLink>
                         </div>
-                        <div class="p-col-6 p-md-4 p-xl-2">
-                            <div class="card overview-box" style="text-align: center !important">
-                                <h5>Crédito</h5>
-                                <p:graphicImage name="credito.png" library="images" width="80"/>
-                            </div>
+                        <div class="p-col-6 p-md-4 p-xl-3">
+                            <p:commandLink action="#{menuController.selectOpcion}">
+                                <div class="card overview-box" style="text-align: center !important">
+                                    <h5>Crédito</h5>
+                                    <p:graphicImage name="credito.png" library="images" width="80"/>
+                                </div>
+                                <f:setPropertyActionListener target="#{menuController.app}" value="2" />
+                            </p:commandLink>
                         </div>
                     </div>
                 </div>
